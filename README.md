@@ -14,7 +14,7 @@ file name | analysis overview | description
 ---|---|-----------
 kelp consumption analysis.R | Analyze kelp consumption | This works through data organization and analysis of urchin foraging behavior minus video analysis; analysis with mixed model ANOVA.
 video analysis.R | Analyze trial videos | This works through data organization and analysis of urchin foraging behavior using videos shot by GoPro Hero 3+; each Corynactis tile was subject to one trial for video analysis
-power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU experiment (https://github.com/stier-lab/Boone-2019-urchin-anemone-fed-unfed) to run a power test for minimum sample sizes needed to find significance in the data
+power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU experiment [@Boone-2019-urchin-anemone-fed-unfed](https://github.com/stier-lab/Boone-2019-urchin-anemone-fed-unfed) to run a power test for minimum sample sizes needed to find significance in the data
 
 # Data 
 */data/raw.xlsx*

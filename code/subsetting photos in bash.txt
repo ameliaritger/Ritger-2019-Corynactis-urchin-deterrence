@@ -1,0 +1,6 @@
+## useful commands in Bash
+ls -F # to see the files in your current folder (i.e. see what folder you're in)
+cd X/ # to move to folder X (replace with Desktop, Downloads, etc)
+## create a new folder (subset/) within the trial video folder (i.e. tank 8/)
+## once you are in the main folder (i.e. tank 8/) in Bash, type this code
+for file in ./*.JPG; do  test $n -eq 0 && cp "$file" subset/; n=$((n+1)); n=$((n%5));  done

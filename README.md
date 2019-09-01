@@ -17,7 +17,8 @@ video analysis.R | Analyze trial videos | This works through data organization a
 power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU experiment (Github link: [@Boone-2019-urchin-anemone-fed-unfed](https://github.com/stier-lab/Boone-2019-urchin-anemone-fed-unfed)) to run a power test to estimate minimum sample sizes needed to find significance in the data.
 
 # Data 
-*/data/raw.xlsx*
+*/data/raw.xlsx* | raw data
+*/data/kelp/* | kelp blade images before and after experiment
 
 # Curious what the critters look like?
 Urchin in contact with Corynactis californica on settlement tiles

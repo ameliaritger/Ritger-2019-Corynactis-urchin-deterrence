@@ -18,6 +18,7 @@ power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU expe
 
 # Data 
 */data/raw.xlsx* | raw data
+
 */data/kelp/* | kelp blade images before and after experiment
 
 # Curious what the critters look like?

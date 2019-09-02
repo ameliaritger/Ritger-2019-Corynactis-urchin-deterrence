@@ -24,3 +24,6 @@ power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU expe
 # Curious what the critters look like?
 Urchin in contact with Corynactis californica on settlement tiles
 ![Alt text](/media/Corynactis_urchin.jpg?raw=true "Urchin in contact with Corynactis californica on settlement tiles")
+
+Urchin in contact with Corynactis californica on settlement tiles during experiment
+![Alt text](/media/G0012242.JPG?raw=true "Urchin in contact with Corynactis californica on settlement tiles")

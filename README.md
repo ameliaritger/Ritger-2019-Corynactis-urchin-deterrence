@@ -26,4 +26,8 @@ Urchin in contact with Corynactis californica on settlement tiles
 ![Alt text](/media/Corynactis_urchin.jpg?raw=true "Urchin in contact with Corynactis californica on settlement tiles")
 
 Urchin in contact with Corynactis californica on settlement tiles during experiment
-![Alt text](/media/G0012242.JPG?raw=true "Urchin in contact with Corynactis californica on settlement tiles")
+![Alt text](/media/G0012242.JPG?raw=true)
+
+Kelp blade before (left) and after (right) image analysis in ImageJ
+![Alt text](/media/8before.JPG?raw=true)
+![Alt text](/media/8after.png?raw=true)

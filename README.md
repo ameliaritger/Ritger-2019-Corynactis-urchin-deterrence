@@ -21,13 +21,13 @@ power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU expe
 
 */data/kelp/*  kelp blade images before and after experiment
 
-# Curious what the critters look like?
-Urchin in contact with Corynactis californica on settlement tiles
-![Alt text](/media/Corynactis_urchin.jpg?raw=true "Urchin in contact with Corynactis californica on settlement tiles")
+# Curious what the experiment look like?
+Purple urchin in contact with Corynactis californica on settlement tiles
+![Alt text](/media/Corynactis_urchin.jpg?raw=true)
 
 Urchin in contact with Corynactis californica on settlement tiles during experiment
 ![Alt text](/media/G0012242.JPG?raw=true)
 
-Kelp blade before (left) and after (right) image analysis in ImageJ
+Kelp blade before (top) and after (bottom) image analysis in ImageJ
 ![Alt text](/media/8before.png?raw=true)
 ![Alt text](/media/8after.png?raw=true)

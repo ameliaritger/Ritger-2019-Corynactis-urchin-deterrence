@@ -29,5 +29,5 @@ Urchin in contact with Corynactis californica on settlement tiles during experim
 ![Alt text](/media/G0012242.JPG?raw=true)
 
 Kelp blade before (left) and after (right) image analysis in ImageJ
-![Alt text](/media/8before.JPG?raw=true)
+![Alt text](/media/8before.png?raw=true)
 ![Alt text](/media/8after.png?raw=true)

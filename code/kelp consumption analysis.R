@@ -1,13 +1,27 @@
 ## Data analysis for Corynactis-Urchin deterrence experiment ##
 ## Code by Amelia Ritger at UCSB on August 26, 2019 ##
 
-#load data
+library(tidyverse)
+library(zoo)
 library(readxl)
+
+#load data
 data <- read_excel("data/raw.xlsx", sheet = "Kelp consumption")
 
 # because I'm not done with trials yet, remove lines for trials not yet run
 data <- data %>%
   filter(`Urchin Size (mm)`>0)
+
+# to keep all control values rather than average them, assign each control trial a unique number
+data$`Cory Tile Number`[data$`Cory Tile Number`==0] <- c(-1:-14)
+
+# take averages (kelp consumption) of each tile, create new data frame from subsetted averages
+data_avg <- data %>%
+  group_by(`Cory Tile Number`) %>%                                     # group tile numbers together
+  mutate(avg_area=mean(`Kelp Consumed (cm^2)`, na.rm=TRUE))  %>%       # take mean of each tile group
+  mutate(avg_percent=mean(`Percent of Kelp Consumed`, na.rm=TRUE)) %>%
+  ungroup() %>%                                                            # ungroup data REALLY IMPT when using group_by
+  distinct(`Cory Tile Number`, .keep_all = TRUE)
 
 # assign the predictor variables to X
 treat <- as.factor(data$Treatment)
@@ -20,22 +34,13 @@ site <- as.factor(data$`Experiment location`)
 starv <- data$`Urchin Starvation Time (days)`
 
 # assign the response variable to Y
-Y <- as.numeric(data$`Percent of Kelp Consumed`)
+Y <- as.numeric(data_avg$`Percent of Kelp Consumed`)
 Yname <- as.character("% Kelp Consumed")
-
-library(tidyverse)
-library(zoo)
 
 # look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
 datan <- subset(data, `Kelp visibly consumed?`=="no") 
 datay <- subset(data, `Kelp visibly consumed?`=="yes")
 summary(datay$`Percent of Kelp Consumed`) #% consumption under 0.05 can be considered "not eaten" (minus 2 blades where kelp was visibly consumed)
-
-# take averages (kelp consumption) of each tile
-data <- data %>%
-  group_by(`Cory Tile Number`) %>%                                     # group tile numbers together
-  mutate(avg_tile=mean(`Kelp Consumed (cm^2)`, na.rm=TRUE))  %>%       # take mean of each tile group
-  ungroup()                                                            # ungroup data REALLY IMPT when using group_by
 
 #Untransformed univariate analyses for Y 
 hist(Y, main="", xlab=Yname)
@@ -55,14 +60,16 @@ plot(Y~treat, main='', ylab=Yname)
 plot(Y~tile)
 plot(Y~site)
 
-plot <- ggplot(data,aes(x=treat,y=Y))+
+a <- ggplot(data_avg,aes(x=Treatment,y=avg_percent))+
   geom_boxplot()+
   geom_point()+
   xlab("Treatment")+
-  ylab("% kelp area consumed")+
+  ylab("% kelp area consumed, averaged by tile")+
   theme_bw()
 
-ggsave("figures/first_run.pdf",plot,width=5,height=5)
+ggsave("figures/first_run_percent.pdf",a,width=5,height=5)
+
+plot(data$Treatment~data$`Kelp visibly consumed?`)
 
 ####################################################
 # General two-way ANOVA: Mixed Model

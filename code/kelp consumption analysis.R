@@ -61,11 +61,6 @@ urch <- as.factor(data$`Urchin "type"`)
 Y <- as.numeric(data$`Percent of Kelp Consumed`)
 Yname <- as.character("% Kelp Consumed")
 
-# look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
-datan <- subset(data, `Kelp visibly consumed?`=="no") 
-datay <- subset(data, `Kelp visibly consumed?`=="yes")
-summary(datay$`Percent of Kelp Consumed`) #% consumption under 0.05 can be considered "not eaten" (minus 2 blades where kelp was visibly consumed)
-
 # Visualize Y vs. Xs - are there any unpredicted effects?
 plot(Y~treat, ylab=Yname)
 plot(Y~size, ylab=Yname)
@@ -77,14 +72,10 @@ plot(Y~site, ylab=Yname)
 plot(Y~starv, ylab=Yname)
 plot(Y~urch, ylab=Yname)
 
-a <- ggplot(data_avg,aes(x=Treatment,y=avg_percent))+
-  geom_boxplot()+
-  geom_point()+
-  xlab("Treatment")+
-  ylab("% kelp area consumed, averaged by tile")+
-  theme_bw()
-
-ggsave("figures/first_run_percent.pdf",a,width=5,height=5)
+# look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
+datan <- subset(data, `Kelp visibly consumed?`=="no") 
+datay <- subset(data, `Kelp visibly consumed?`=="yes")
+summary(datan$`Percent of Kelp Consumed`) #% consumption under 0.05 can be considered "not eaten" (minus 2 blades where kelp was "visibly" consumed)
 
 ####################################################
 # General two-way ANOVA: Mixed Model

@@ -13,7 +13,7 @@ data <- data %>%
   filter(`Urchin Size (mm)`>0)
 
 # to keep all control values rather than average them, assign each control trial a unique number
-data$`Cory Tile Number`[data$`Cory Tile Number`==0] <- c(-1:-14)
+data$`Cory Tile Number`[data$`Cory Tile Number`==0] <- c(-1:-15)
 
 # take averages (kelp consumption) of each tile, create new data frame from subsetted averages
 data_avg <- data %>%
@@ -24,27 +24,25 @@ data_avg <- data %>%
   distinct(`Cory Tile Number`, .keep_all = TRUE)                       # remove duplicate tiles
 
 # assign the response variable to Y
-Yp <- as.numeric(data_avg$avg_percent)
-Ypname <- as.character("% Kelp Consumed")
-
-Ya <- as.numeric(data_avg$avg_area)
-Yaname <- as.character("Kelp area Consumed")
+Y <- log(as.numeric(1+data$`No zero`))
+Yname <- as.character("log(% Kelp Consumed)")
+#binomial distrib
 
 #Untransformed univariate analyses for Y 
-hist(Yp, main="", xlab=Ypname)
-boxplot(Yp, xlab=Ypname)
-qqnorm(Yp)
-qqline(Yp) #neither area nor percent don't need transformation
+hist(Y, main="", xlab=Yname)
+boxplot(Y, xlab=Yname)
+qqnorm(Y)
+qqline(Y) #neither area nor percent don't need transformation
 
 # quick look at kelp consumption by treatment
-a <- ggplot(data_avg,aes(x=Treatment,y=avg_percent))+
+ggplot(data,aes(x=Treatment,y=`No zero`))+
   geom_boxplot()+
-  geom_point()+
+  geom_jitter()+
   xlab("Treatment")+
-  ylab("% kelp area consumed, averaged by tile")+
+  ylab("log(% kelp area consumed)")+
   theme_bw()
 
-ggsave("figures/first_run_percent.pdf",a,width=5,height=5)
+ggsave("figures/second_to_last_area.pdf",b,width=5,height=5)
 
 # assign the predictor variables to X
 treat <- as.factor(data$Treatment)
@@ -56,10 +54,8 @@ loc <- as.factor(data$`Kelp Location`)
 site <- as.factor(data$`Experiment location`)
 starv <- data$`Urchin Starvation Time (days)`
 urch <- as.factor(data$`Urchin "type"`)
-
-# assign the response variable to Y
-Y <- as.numeric(data$`Percent of Kelp Consumed`)
-Yname <- as.character("% Kelp Consumed")
+area <- data$`Kelp Consumed (cm^2)`
+pcnt <- data$`Percent of Kelp Consumed`
 
 # Visualize Y vs. Xs - are there any unpredicted effects?
 plot(Y~treat, ylab=Yname)
@@ -73,7 +69,7 @@ plot(Y~starv, ylab=Yname)
 plot(Y~urch, ylab=Yname)
 
 # look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
-datan <- subset(data, `Kelp visibly consumed?`=="no") 
+datan <- subset(data, `Kelp visibly consumed?`=="no")
 datay <- subset(data, `Kelp visibly consumed?`=="yes")
 summary(datan$`Percent of Kelp Consumed`) #% consumption under 0.05 can be considered "not eaten" (minus 2 blades where kelp was "visibly" consumed)
 
@@ -82,7 +78,7 @@ summary(datan$`Percent of Kelp Consumed`) #% consumption under 0.05 can be consi
 ####################################################
 
 library(lmerTest)
-m1 <- lmer(Y ~ 1 + XXX + (1|XXX) + (1|XXX:XXX))
+m1 <- lmer(Y ~ data$Treatment + 1|data$`Cory Tile Number`)
 
 summary(m1)
 anova(m1)

@@ -14,7 +14,7 @@ data <- data %>%
   filter(`Urchin Size (mm)`>0)
 
 # To compare across treatments, presence/absence of Corynactis
-data$present_absent <- ifelse(data$`Treatment Number`>1, "present", "absent")
+data$corynactis_binary <- ifelse(data$`Treatment Number`>1, "present", "absent")
 
 # look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
 datan <- subset(data, `Kelp visibly consumed?`=="no")
@@ -24,7 +24,7 @@ sort(datan$`Percent of Kelp Consumed`) #If any percent consumption is less than 
 data$percent_corrected <- ifelse(data$`Kelp visibly consumed?`=="no", 0, data$`Percent of Kelp Consumed`)
 
 # To compare consumption (yes, no) across treatments
-data$consumption <- ifelse(data$percent_corrected>0, "1", "0")
+data$consumption_binary <- ifelse(data$percent_corrected>0, 1, 0)
 # Average urchin body weight before and after trials
 data <- data %>%
   mutate(urchin_avg_g = rowMeans(cbind(`Urchin weight before (g)`,`Urchin weight after (g)`)))
@@ -67,7 +67,7 @@ qqnorm(Y)
 qqline(Y) #of course log transformed zero-heavy Y looks normal
 
 # quick look at kelp consumption by treatment
-ggplot(data,aes(x=Treatment,y=percent_corrected))+
+ggplot(data,aes(x=treat,y=percent_corrected))+
   geom_boxplot()+
   geom_jitter()+
   xlab("Treatment")+
@@ -75,7 +75,7 @@ ggplot(data,aes(x=Treatment,y=percent_corrected))+
   theme_bw()
 
 #rough model to look at effects of treatment on kelp consumption
-m1 <- lm(Y ~ data$Treatment)
+m1 <- lm(Y ~ treat)
 summary(m1)
 
 # quick look at kelp consumption with and without Corynactis
@@ -102,14 +102,10 @@ plot(Y~tloc, ylab=Yname)
 plot(Y~starv, ylab=Yname)
 plot(Y~used, ylab=Yname)
 
-# look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
-datan <- subset(data, `Kelp visibly consumed?`=="no")
-datay <- subset(data, `Kelp visibly consumed?`=="yes")
-sort(datay$`Percent of Kelp Consumed`) #% consumption under 0.05 can be considered "not eaten" (minus 2 blades where kelp was "visibly" consumed)
-
 ####################################################
 # General one-way ANOVA: Mixed Model
 ####################################################
+#### TO DO: deal with non-normal distribution of data
 
 library(lmerTest)
 m3 <- lmer(Y ~ treat + (1|tile))
@@ -119,3 +115,31 @@ anova(m3)
 anova(m3, ddf="lme4")
 st <- step(m3)
 plot(m3)
+
+####################################################
+# Chi-square test
+###################################################
+
+# Chi-square test for kelp consumption versus no consumption for yes/no Corynactis
+t1<-table(data$corynactis_binary, data$consumption_binary)
+rowSums(t1) #number of times Corynactis were or weren't used
+colSums(t1) #number of times urchins did or did not eat
+prop.table(t1)*100 #probability distribution table
+cs <- chisq.test(data$corynactis_binary, data$consumption_binary)
+cs$p.value #p value = 0.1335, yes/no consumption and yes/no Corynactis are independent
+cs$observed #observed
+round(cs$expected,2) #expected
+round(cs$residuals, 3) #pearsons residuals
+library(corrplot)
+corrplot(cs$residuals, is.cor = FALSE) #visualize pearsons residuals; blue positively associated with variables, red negatively associated with variables
+contrib <- 100*cs$residuals^2/cs$statistic #contribution in %
+round(contrib, 3) #visualize % contribution of pearsons residuals for each variable
+corrplot(contrib, is.cor = FALSE) #visualize contribution - dependency is heavy on controls
+
+# Chi-square test for kelp consumption versus no consumption across treatments
+t2<-table(data$Treatment, data$consumption_binary)
+#visualize contingency table
+library(gplots)
+balloonplot(t(t2), main ="", xlab ="", ylab="", label = FALSE, show.margins = FALSE)
+cs <- chisq.test(data$Treatment, data$consumption_binary) #yes/no consumption and treatment are independent p = 0.1369, red positively associated with no consumption control positively associated with kelp consumption, control and red are strongly influencing dependency 
+

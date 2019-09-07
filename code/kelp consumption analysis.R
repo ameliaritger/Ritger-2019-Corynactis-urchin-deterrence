@@ -1,5 +1,5 @@
 ## Data analysis for Corynactis-Urchin deterrence experiment ##
-## Code by Amelia Ritger at UCSB on September 6, 2019 ##
+## Code by Amelia Ritger at UCSB on September 7, 2019 ##
 
 library(tidyverse)
 library(zoo)

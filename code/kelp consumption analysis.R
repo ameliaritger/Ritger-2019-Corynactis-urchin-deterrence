@@ -42,6 +42,7 @@ data_avg <- data %>%
   ungroup() %>%                                                        # ungroup data REALLY IMPT when using group_by
   distinct(`Cory Tile Number`, .keep_all = TRUE)                       # remove duplicate tiles
 
+
 ## ORGANIZE CODE
 # assign the response variable to Y
 Y <- as.numeric(data$percent_corrected) #binomial distribution? needs transformation
@@ -58,12 +59,26 @@ tloc <- as.factor(data$experiment_location)
 starv <- data$`Urchin Starvation Time (days)`
 used <- as.factor(data$`Urchin "type"`)
 
-## ANALYSIS 
-#Univariate analyses for Y 
+
+## FIRST-PASS ANALYSIS 
+#Univariate analysis for Y 
 hist(Y, main="", xlab=Yname)
 boxplot(Y, xlab=Yname)
 qqnorm(Y)
 qqline(Y)
+
+# quick look at kelp consumption with and without Corynactis
+ggplot(data,aes(x=corynactis_binary,y=percent_corrected))+
+  geom_boxplot()+
+  geom_jitter()+
+  xlab("Treatment")+
+  ylab("% kelp area consumed")+
+  theme_bw()
+#ggsave("figures/present_absent.pdf",a,width=5,height=5)
+
+# rough model to look at effects of Corynactis on kelp consumption
+m2 <- lm(Y~data$corynactis_binary)
+summary(m2)
 
 # quick look at kelp consumption by treatment
 ggplot(data,aes(x=treat,y=area_corrected))+
@@ -73,23 +88,9 @@ ggplot(data,aes(x=treat,y=area_corrected))+
   ylab("kelp area consumed")+
   theme_bw()
 
-ggsave("figures/sept7_area.pdf",a,width=5,height=5)
-
-#rough model to look at effects of treatment on kelp consumption
+# rough model to look at effects of treatment on kelp consumption
 m1 <- lm(Y ~ treat)
 summary(m1)
-
-# quick look at kelp consumption with and without Corynactis
-ggplot(data,aes(x=present_absent,y=percent_corrected))+
-  geom_boxplot()+
-  geom_jitter()+
-  xlab("Treatment")+
-  ylab("% kelp area consumed")+
-  theme_bw()
-
-#rough model to look at effects of Corynactis on kelp consumption
-m2 <- lm(Y~data$present_absent)
-summary(m2)
 
 ## now to do things properly...
 # Visualize Y vs. Xs - are there any unpredicted effects?
@@ -120,6 +121,7 @@ plot(m3)
 ####################################################
 # Chi-square test
 ###################################################
+# Results: Red color morph is not necessarily more likely to have no consumption, since treatment and %consumption are independent
 
 # Chi-square test for kelp consumption versus no consumption for yes/no Corynactis
 t1<-table(data$corynactis_binary, data$consumption_binary)
@@ -127,13 +129,13 @@ rowSums(t1) #number of times Corynactis were or weren't used
 colSums(t1) #number of times urchins did or did not eat
 prop.table(t1)*100 #probability distribution table
 cs <- chisq.test(data$corynactis_binary, data$consumption_binary)
-cs$p.value #p value = 0.1335, yes/no consumption and yes/no Corynactis are independent
-cs$observed #observed
-round(cs$expected,2) #expected
+cs$p.value #p value = 0.1326, yes/no consumption and yes/no Corynactis are independent
+cs$observed #observed values
+round(cs$expected,2) #expected values
 round(cs$residuals, 3) #pearsons residuals
 library(corrplot)
-corrplot(cs$residuals, is.cor = FALSE) #visualize pearsons residuals; blue positively associated with variables, red negatively associated with variables
-contrib <- 100*cs$residuals^2/cs$statistic #contribution in %
+corrplot(cs$residuals, is.cor = FALSE) #visualize pearsons residuals; (blue color means positively associated with variables, red color means negatively associated with variables); controls driving a lot of this trend
+contrib <- 100*cs$residuals^2/cs$statistic #contribution of residuals in %
 round(contrib, 3) #visualize % contribution of pearsons residuals for each variable
 corrplot(contrib, is.cor = FALSE) #visualize contribution - dependency is heavy on controls
 
@@ -142,5 +144,4 @@ t2<-table(data$Treatment, data$consumption_binary)
 #visualize contingency table
 library(gplots)
 balloonplot(t(t2), main ="", xlab ="", ylab="", label = FALSE, show.margins = FALSE)
-cs <- chisq.test(data$Treatment, data$consumption_binary) #yes/no consumption and treatment are independent p = 0.1369, red positively associated with no consumption control positively associated with kelp consumption, control and red are strongly influencing dependency 
-
+cs <- chisq.test(data$Treatment, data$consumption_binary) #yes/no consumption and treatment are independent p = 0.1104, red morph positively associated with no consumption control positively associated with kelp consumption, control and red are strongly influencing dependency 

@@ -9,19 +9,20 @@ library(readxl)
 data <- read_excel("data/raw.xlsx", sheet = "Kelp consumption")
 
 ## TIDY DATA
-# because I'm not done with trials yet, remove lines for trials not yet run
-data <- data %>%
-  filter(`Urchin Size (mm)`>0)
-
 # To compare across treatments, presence/absence of Corynactis
 data$corynactis_binary <- ifelse(data$`Treatment Number`>1, "present", "absent")
+# Create variables: Kelp consumed, percent kelp consumed
+data <- data %>%
+  mutate(area_consumed_cm2=(`Kelp Before (cm^2)`-`Kelp After (cm^2)`)) %>%
+  mutate(percent_consumed=(area_consumed_cm2/`Kelp Before (cm^2)`))
 
 # look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
 datan <- subset(data, `Kelp visibly consumed?`=="no")
 datay <- subset(data, `Kelp visibly consumed?`=="yes")
-sort(datan$`Percent of Kelp Consumed`) #If any percent consumption is less than 0.04, we assume there was no consumption (aka 'remove' ImageJ analysis error)...minus the one piece of kelp that definitely had a tiny bit of urchin chewing it
+sort(datan$percent_consumed) #If any percent consumption is less than 0.04, we assume there was no consumption (aka 'remove' ImageJ analysis error)...minus the one piece of kelp that definitely had a tiny bit of urchin chewing it
 #data$percent_corrected <- ifelse(data$`Percent of Kelp Consumed`>0.04, data$`Percent of Kelp Consumed`, 0)
-data$percent_corrected <- ifelse(data$`Kelp visibly consumed?`=="no", 0, data$`Percent of Kelp Consumed`)
+data$percent_corrected <- ifelse(data$`Kelp visibly consumed?`=="no", 0, data$percent_consumed)
+data$area_corrected <- ifelse(data$`Kelp visibly consumed?`=="no", 0, data$area_consumed_cm2)
 
 # To compare consumption (yes, no) across treatments
 data$consumption_binary <- ifelse(data$percent_corrected>0, 1, 0)
@@ -31,22 +32,20 @@ data <- data %>%
 # To see if balcony versus wet lab location had an effect
 data$experiment_location <- ifelse(data$`Tank number`>6, "Balcony", "Lab")
 # To keep all control values rather than average them, assign each control trial a unique number
-data$`Cory Tile Number`[data$`Cory Tile Number`==0] <- c(-1:-15)
+data$`Cory Tile Number`[data$`Cory Tile Number`==0] <- c(-1:-16)
 
 # take averages (kelp consumption) of each tile, create new data frame from subsetted averages
 data_avg <- data %>%
   group_by(`Cory Tile Number`) %>%                                     # group tile numbers together
-  mutate(avg_area=mean(`Kelp Consumed (cm^2)`, na.rm=TRUE))  %>%       # take mean kelp consumption of each tile group
-  mutate(avg_percent=mean(`Percent of Kelp Consumed`, na.rm=TRUE)) %>% # take mean % kelp consumption of each tile group
+  mutate(avg_area=mean(area_consumed_cm2, na.rm=TRUE))  %>%       # take mean kelp consumption of each tile group
+  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>% # take mean % kelp consumption of each tile group
   ungroup() %>%                                                        # ungroup data REALLY IMPT when using group_by
   distinct(`Cory Tile Number`, .keep_all = TRUE)                       # remove duplicate tiles
 
 ## ORGANIZE CODE
 # assign the response variable to Y
-Y <- as.numeric(data$percent_corrected) #binomial distribution?
+Y <- as.numeric(data$percent_corrected) #binomial distribution? needs transformation
 Yname <- as.character("% Kelp Consumed")
-lY <- log(as.numeric(data$percent_corrected))
-lYname <- as.character("log(% Kelp Consumed)")
 
 # assign the predictor variables to X
 treat <- as.factor(data$Treatment)
@@ -64,15 +63,17 @@ used <- as.factor(data$`Urchin "type"`)
 hist(Y, main="", xlab=Yname)
 boxplot(Y, xlab=Yname)
 qqnorm(Y)
-qqline(Y) #of course log transformed zero-heavy Y looks normal
+qqline(Y)
 
 # quick look at kelp consumption by treatment
-ggplot(data,aes(x=treat,y=percent_corrected))+
+ggplot(data,aes(x=treat,y=area_corrected))+
   geom_boxplot()+
   geom_jitter()+
   xlab("Treatment")+
-  ylab("% kelp area consumed")+
+  ylab("kelp area consumed")+
   theme_bw()
+
+ggsave("figures/sept7_area.pdf",a,width=5,height=5)
 
 #rough model to look at effects of treatment on kelp consumption
 m1 <- lm(Y ~ treat)

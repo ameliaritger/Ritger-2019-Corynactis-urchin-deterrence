@@ -64,7 +64,7 @@ used <- as.factor(data$`Urchin "type"`)
 hist(Y, main="", xlab=Yname)
 boxplot(Y, xlab=Yname)
 qqnorm(Y)
-qqline(Y)
+qqline(Y) #of course log transformed zero-heavy Y looks normal
 
 # quick look at kelp consumption by treatment
 ggplot(data,aes(x=Treatment,y=percent_corrected))+

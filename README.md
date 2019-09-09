@@ -34,7 +34,7 @@ Kelp blade before (top) and after (bottom) image analysis in ImageJ
 ![Alt text](/media/8after.png?raw=true)
 
 Example of Corynactis deterring urchins
-<img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" width="499.2" height="373.36" /> Just kidding.
+<img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" width="624" height="466.7" /> Just kidding.
 <img src="https://media.giphy.com/media/kBe4VrggiK8etQ7eW4/giphy.gif" width="624" height="351" />
 
 Sometimes the Corynactis polyps don't like being walked on by the urchins, so they close up

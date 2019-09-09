@@ -32,3 +32,6 @@ Urchin in contact with Corynactis californica on settlement tiles during experim
 Kelp blade before (top) and after (bottom) image analysis in ImageJ
 ![Alt text](/media/8before.png?raw=true)
 ![Alt text](/media/8after.png?raw=true)
+
+Example of Corynactis deterring urchins
+![Alt text](/media/urchin_deterred.mov?raw=true)

@@ -34,4 +34,4 @@ Kelp blade before (top) and after (bottom) image analysis in ImageJ
 ![Alt text](/media/8after.png?raw=true)
 
 Example of Corynactis deterring urchins
-![Alt text](/media/urchin_deterred.mov?)
+![](https://j.gifs.com/r8BZq4.gif)

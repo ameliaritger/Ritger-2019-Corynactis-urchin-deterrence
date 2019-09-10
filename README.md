@@ -37,9 +37,9 @@ Sometimes Corynactis polyps don't like being walked on by urchins
 <img src="https://media.giphy.com/media/W3fUlH7bOT2PX2UPjY/giphy.gif" width="624" height="351" />
 
 Kelp blade before (top) and after (bottom) consumption by an urchin
-![Alt text](/media/12before.jpg?raw=true)
-![Alt text](/media/12after.jpg?raw=true)
+![Alt text](/media/12before_s.jpg?raw=true)
+![Alt text](/media/12after_s.jpg?raw=true)
 
 Kelp blade before (top) and after (bottom) image analysis in ImageJ
-![Alt text](/media/8before.png?raw=true)
-![Alt text](/media/8after.png?raw=true)
+![Alt text](/media/8before_s.png?raw=true)
+![Alt text](/media/8after_s.png?raw=true)

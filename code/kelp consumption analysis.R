@@ -1,4 +1,4 @@
-## Data analysis for Corynactis-Urchin deterrence experiment ##
+## Data analysis for Corynactis-Urchin deterrence experiment - kelp consumption ##
 ## Code by Amelia Ritger at UCSB on September 7, 2019 ##
 
 library(tidyverse)

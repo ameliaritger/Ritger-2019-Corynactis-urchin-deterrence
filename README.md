@@ -29,13 +29,17 @@ Purple urchin in contact with Corynactis californica on settlement tiles
 Urchin in contact with Corynactis californica on settlement tiles during experiment
 ![Alt text](/media/G0012242.JPG?raw=true)
 
+Example of Corynactis deterring urchins
+<img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" width="624" height="466.7" /> *Just kidding.*
+<img src="https://media.giphy.com/media/kBe4VrggiK8etQ7eW4/giphy.gif" width="624" height="351" />
+
+Sometimes Corynactis polyps don't like being walked on by urchins
+<img src="https://media.giphy.com/media/W3fUlH7bOT2PX2UPjY/giphy.gif" width="624" height="351" />
+
+Kelp blade before (top) and after (bottom) consumption by an urchin
+![Alt text](/media/12before.jpg?raw=true)
+![Alt text](/media/12after.jpg?raw=true)
+
 Kelp blade before (top) and after (bottom) image analysis in ImageJ
 ![Alt text](/media/8before.png?raw=true)
 ![Alt text](/media/8after.png?raw=true)
-
-Example of Corynactis deterring urchins
-<img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" width="624" height="466.7" /> Just kidding.
-<img src="https://media.giphy.com/media/kBe4VrggiK8etQ7eW4/giphy.gif" width="624" height="351" />
-
-Sometimes the Corynactis polyps don't like being walked on by the urchins
-<img src="https://media.giphy.com/media/W3fUlH7bOT2PX2UPjY/giphy.gif" width="624" height="351" />

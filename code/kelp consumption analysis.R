@@ -61,7 +61,7 @@ used <- as.factor(data$`Urchin "type"`)
 
 
 ## FIRST-PASS ANALYSIS 
-#Univariate analysis for Y 
+#Univariate analysis for Y
 hist(Y, main="", xlab=Yname)
 boxplot(Y, xlab=Yname)
 qqnorm(Y)

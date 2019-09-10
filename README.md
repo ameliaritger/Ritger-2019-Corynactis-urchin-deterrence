@@ -27,7 +27,7 @@ Purple urchin in contact with Corynactis californica on settlement tiles
 ![Alt text](/media/Corynactis_urchin.jpg?raw=true)
 
 Urchin in contact with Corynactis californica on settlement tiles during experiment
-![Alt text](/media/G0012242.JPG?raw=true)
+![Alt text](/media/urchin_in_contact.JPG?raw=true)
 
 Example of Corynactis deterring urchins
 <img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" width="624" height="466.7" /> *Just kidding.*

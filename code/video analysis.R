@@ -20,24 +20,29 @@ data <- subset(data, !data$Urchin_deter_success=="Urchin never moved")
 data$corynactis_binary <- ifelse(data$Treatment_numb>1, "present", "absent")
 # Standardize "instances of action" across trials because different video lengths
 data <- data %>%
-  mutate(contact_per_min=(Numb_contact/Total_video)) %>%
-  mutate(deter_per_min=(Numb_deter/Total_video)) %>%
-  mutate(cross_per_min=(Numb_cross/Total_video)) 
+  mutate(contact_per_hr=((Numb_contact/Total_video)*60)) %>%
+  mutate(deter_per_hr=((Numb_deter/Total_video)*60)) %>%
+  mutate(cross_per_hr=((Numb_cross/Total_video)*60)) %>%
+  mutate(deter_per_hr = replace(deter_per_hr, deter_per_hr == 0, 0.000001)) %>%
+  mutate(percent_deter=(deter_per_hr/contact_per_hr)) %>%
+  mutate(percent_cross=(cross_per_hr/contact_per_hr))
 
 ## VISUALIZE DATA
 # assign variables
-Y <- log(data$Time_to_kelp)
-Y <- log(data$Time_cross_first)
+Y <- log10(data$Time_to_kelp)
+Y <- log10(data$Time_cross_first)
 Y <- data$Percent_alone
 Y <- data$Percent_kelp
-Y <- log(data$contact_per_min)
-Y <- data$deter_per_min
-Y <- data$cross_per_min
+Y <- log10((data$contact_per_hr))
+Y <- (data$deter_per_hr)
+Y <- (data$cross_per_hr)
+Y <- data$percent_deter
+Y <- data$percent_cross
 outcome <- factor(as.factor(data$Urchin_deter_success))
 treat <- as.factor(data$Treatment)
 cory <- as.factor(data$corynactis_binary)
 
-Yname <- as.character("# cross per min")
+Yname <- as.character("log10(number of deterrences/hr")
 
 #Univariate analysis for Y
 hist(Y, main="", xlab=Yname)
@@ -47,7 +52,17 @@ qqline(Y)
 
 #look for correlations among Ys
 ggpairs(data[, c("Time_to_kelp", "Time_cross_first", "Percent_alone", "Percent_kelp", "contact_per_min", "deter_per_min", "cross_per_min")])
+# % time with kelp is - corr with % time with alone (-.99) and both are corr with # deterrence (0.46, -0.46)
+# time to get to kelp is + corr with time to cross cory tile
+# # contacts with tile is + corr with # deterrence events (0.8) and # crosses (0.4)
 
+#interesting things to look at separately - # deterrence, # crosses, time to cross tile
+
+b <- Y~treat
+a<-plot(b, ylab=Yname, xlab="Treatment")
+ggsave("figures/treatment_percentkelp.pdf",a,width=5,height=5)
+summary(lm(b))
+TukeyHSD(aov(lm(b))) 
 
 
 ####################################################
@@ -71,18 +86,3 @@ round(cs$residuals, 3) #pearsons residuals
 corrplot(cs$residuals, is.cor = FALSE) #visualize pearsons residuals; (blue color means positively associated with variables, red color means negatively associated with variables); controls driving a lot of this trend, pink and red also important
 contrib <- 100*cs$residuals^2/cs$statistic #contribution of residuals in %
 round(contrib, 3) #visualize % contribution of pearsons residuals for each variable
-
-
-
-
-
-plot(data$`Times deterred from tile`~as.factor(data$Treatment))
-data$`Times deterred from tile`
-class(data$`Times deterred from tile`)
-
-
-plot(data2$`Urchin Size (mm)`~data2$`Total video time (min)`)
-plot(data$`Urchin Size (mm)`~data$`Total video time (min)`)
-
-
-plot(data$area_consumed_cm2~Y4, xlab=Yname)

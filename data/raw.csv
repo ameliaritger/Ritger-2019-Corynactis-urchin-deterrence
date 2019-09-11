@@ -1,77 +1,77 @@
-﻿Trial,Date,Julian date,Temp,Tank,Kelp,Treatment,Treatment_numb,Cory_numb,Percent,Urchin_size,Urchin_wt_b,Urchin_wt_a,Urchin_age,Urchin_starve,Start,Stop,Kelp_b,Kelp_a,Visible_consumption,Video,Time_to_kelp,Time_with_kelp,Numb_contact,Numb_deter,Numb_cross,Time_cross_first,Time_cross_avg,Total_video,Percent_alone,Percent_kelp,When_consumption,Urchin_deter,Urchin_deter_success,Kelp comments,Video comments
-1,31-Aug-19,243,15.13025641,1,S,Orange,3,11,,55,75,72,Old,7,1920,730,129.304,115.282,yes,yes,70,275,6,1,5,58,18.75,532,0.233082707,0.516917293,kelp consumed during video,Yes,Corynactis was so close,,
-2,31-Aug-19,243,15.13025641,2,N,Orange,3,20,,43,36,35,Old,7,1920,730,125.295,123.61,no,yes,,,4,4,0,,,576,1,0,urchin never ate kelp,Yes,Corynactis was a monster,"""after"" includes shadows",
-3,31-Aug-19,243,15.13025641,3,S,Control,1,0,,44,43,43,Old,7,1920,730,97.843,70.075,yes,yes,7,306,1,0,1,3,,326,0.052147239,0.938650307,kelp consumed during video,No,Urchin was a beast,,GoPro didn't connect to BacPack
-4,31-Aug-19,243,15.13025641,4,N,Red,2,7,,49,53,52,Old,7,1920,730,122.582,104.473,yes,yes,41,463,2,1,1,15,,561,0.147950089,0.825311943,kelp consumed during video,Yes,Corynactis was so close,,
-5,31-Aug-19,243,15.13025641,5,N,Pink,4,21,,50,58,58,Old,7,1920,730,113.479,84.423,yes,yes,32,423,3,0,3,11,10.33333333,576,0.210648148,0.734375,kelp consumed during video,No,Urchin was a beast,"""before"" out of focus",
-6,31-Aug-19,243,15.13025641,6,N,Orange,3,19,,44,41,41,Old,7,1920,730,119.378,105.734,yes,yes,39,306,10,1,9,20,10.42857143,622,0.3585209,0.491961415,kelp consumed during video,Yes,Corynactis was so close,,
-7,31-Aug-19,243,15.74688312,7,N,Orange,3,15,,57,80,78,Old,7,1930,740,90.467,90.678,no,no,,,,,,,,,,,,,,,
-8,31-Aug-19,243,15.74688312,8,S,Pink,4,30,,62,97,95,Old,7,1930,740,114.098,114.75,no,no,,,,,,,,,,,,,,,
-9,31-Aug-19,243,15.74688312,9,N,Red,2,3,,48,53,50,Old,7,1930,740,108.271,108.896,no,no,,,,,,,,,,,,,,"""after"" includes shadows",
-10,31-Aug-19,243,15.74688312,10,S,Red,2,8,,49,64,62,Old,7,1930,740,104.895,102.779,no,no,,,,,,,,,,,,,,"""before"" out of focus, ""after"" includes shadows",
-11,31-Aug-19,243,15.74688312,11,N,Control,1,0,,60,91,89,Old,7,1930,740,118.879,90.667,yes,no,,,,,,,,,,,,,,"""after"" includes shadows",
-12,31-Aug-19,243,15.74688312,12,N,Orange,3,16,,42,42,43,Old,7,1930,740,128.021,100.726,yes,no,,,,,,,,,,,,,,"""before"" out of focus",
-13,31-Aug-19,243,15.74688312,13,S,Control,1,0,,49,53,53,Old,7,1930,740,117.839,105.361,yes,no,,,,,,,,,,,,,,"""before"" out of focus, ""after"" includes shadows",
-14,31-Aug-19,243,15.74688312,14,S,Pink,4,25,,54,62,60,Old,7,1930,740,88.839,87.476,no,no,,,,,,,,,,,,,,"""before"" out of focus",
-15,1-Sep-19,244,15.01782051,1,N,Red,2,8,,45,45,45,Old,8,1910,710,108.065,106.862,no,yes,,,0,0,0,,,620,1,0,urchin never ate kelp,urchin never tried,Urchin didn't even try,,Urchin never moved
-16,1-Sep-19,244,15.01782051,2,S,Orange,3,12,,43,40,41,Old,8,1910,710,101.61,66.283,yes,yes,14,517,1,0,1,8,,594,0.116161616,0.87037037,kelp consumed during video,No,Urchin was a beast,"too much measured on ""after"" ",
-17,1-Sep-19,244,15.01782051,3,N,Orange,3,16,,58,85,85,Old,8,1910,710,90.219,88.927,no,yes,32,131,9,4,5,23,11.8,608,0.649671053,0.215460526,urchin never ate kelp,Yes,Corynactis was so close,shade => guesstimate,Urchin with personality
-18,1-Sep-19,244,15.01782051,4,S,Control,1,0,,48,51,51,Old,8,1910,710,90.47,88.609,no,yes,,,0,0,0,,,605,1,0,urchin never ate kelp,urchin never tried,Urchin didn't even try,,Urchin never moved
-19,1-Sep-19,244,15.01782051,5,N,Pink,4,25,,50,60,61,Old,8,1910,710,131.331,105.565,yes,yes,15,335,3,2,1,8,,558,0.385304659,0.600358423,kelp consumed during video,Yes,Corynactis was so close,,
-20,1-Sep-19,244,15.01782051,6,N,Red,2,9,,49,46,45,Old,8,1910,710,94.843,94.238,no,yes,,,3,3,0,,,617,1,0,urchin never ate kelp,Yes,Corynactis was a monster,,
-21,1-Sep-19,244,15.42692308,7,N,Pink,4,21,,48,54,53,Old,8,1905,705,120.037,118.857,no,no,,,,,,,,,,,,,,,
-22,1-Sep-19,244,15.42692308,8,S,Red,2,5,,57,79,79,Old,8,1905,705,122.246,122.388,no,no,,,,,,,,,,,,,,,
-23,1-Sep-19,244,15.42692308,9,N,Red,2,7,,50,50,51,Old,8,1905,705,100.352,99.629,no,no,,,,,,,,,,,,,,,
-24,1-Sep-19,244,15.42692308,10,N,Red,2,4,,50,55,56,Old,8,1905,705,95.666,94.129,no,no,,,,,,,,,,,,,,,
-25,1-Sep-19,244,15.42692308,11,S,Control,1,0,,61,92,94,Old,8,1905,705,103.683,92.487,yes,no,,,,,,,,,,,,,,,
-26,1-Sep-19,244,15.42692308,12,N,Pink,4,24,,44,34,35,Old,8,1905,705,102.07,101.742,no,no,,,,,,,,,,,,,,,
-27,1-Sep-19,244,15.42692308,13,N,Orange,3,13,,45,44,45,Old,8,1905,705,105.818,104.006,no,no,,,,,,,,,,,,,,,
-28,1-Sep-19,244,15.42692308,14,S,Control,1,0,,47,40,41,Old,8,1905,705,109.04,104.875,no,no,,,,,,,,,,,,,,,
-29,2-Sep-19,245,15.4475641,1,S,Control,1,0,,59,96,98,Old,9,1915,720,90.497,54.828,yes,yes,15,272,1,0,1,7,,327,0.146788991,0.831804281,kelp consumed during video,No,Urchin was a beast,,GoPro not connected to BacPack
-30,2-Sep-19,245,15.4475641,2,S,Pink,4,23,,45,40,42,Old,9,1915,720,103.925,74.176,yes,yes,32,579,1,0,1,23,,642,0.062305296,0.901869159,kelp consumed during video,No,Urchin was a beast,,
-31,2-Sep-19,245,15.4475641,3,S,Red,2,2,,49,62,63,Old,9,1915,720,74.209,61.512,yes,yes,25,310,12,11,1,17,,621,0.473429952,0.499194847,kelp consumed during video,Yes,Corynactis was so close,,urchin loses kelp blade at 3am
-32,2-Sep-19,245,15.4475641,4,S,Orange,3,14,,48,47,47,Old,9,1915,720,93.228,94.572,no,yes,,,0,0,0,,,544,1,0,urchin never ate kelp,urchin never tried,Urchin didn't even try,,Urchin never moved
-33,2-Sep-19,245,15.4475641,5,N,Orange,3,15,,53,76,75,Old,9,1915,720,84.348,56.582,yes,yes,135,475,1,0,1,120,,613,0.029363785,0.774877651,kelp consumed during video,No,Urchin was a beast,,
-34,2-Sep-19,245,15.4475641,6,N,Red,2,1,,47,47,47,Old,9,1915,720,96.76,95.732,no,yes,14,557,3,1,2,10,,583,0.027444254,0.955403087,urchin never ate kelp,Yes,Corynactis was so close,,urchin uses kelp as a shawl
-35,2-Sep-19,245,15.63615385,7,S,Control,1,0,,52,63,63,Old,9,1920,720,93.5,62.167,yes,no,,,,,,,,,,,,,,,
-36,2-Sep-19,245,15.63615385,8,S,Control,1,0,,47,49,50,Old,9,1920,720,93.728,92.887,no,no,,,,,,,,,,,,,,,
-37,2-Sep-19,245,15.63615385,9,S,Orange,3,19,,45,46,47,Old,9,1920,720,101.639,73.295,yes,no,,,,,,,,,,,,,,,
-38,2-Sep-19,245,15.63615385,10,S,Orange,3,11,,54,72,73,Old,9,1920,720,80.154,39.98,yes,no,,,,,,,,,,,,,,,
-39,2-Sep-19,245,15.63615385,11,N,Pink,4,22,,53,68,70,Old,9,1920,720,93.593,53.596,yes,no,,,,,,,,,,,,,,,
-40,2-Sep-19,245,15.63615385,12,N,Red,2,6,,58,90,89,Old,9,1920,720,58.831,5.205,yes,no,,,,,,,,,,,,,,,
-41,2-Sep-19,245,15.63615385,13,S,Pink,4,27,,59,83,83,Old,9,1920,720,75.53,74.962,yes,no,,,,,,,,,,,,,,,
-42,2-Sep-19,245,15.63615385,14,N,Orange,3,20,,50,57,57,Old,9,1920,720,77.009,75.542,no,no,,,,,,,,,,,,,,"""before"" and ""after"" included some shadow",
-43,3-Sep-19,246,15.51602564,1,S,Red,2,5,,60,93,93,New,7,1930,720,68.571,12.182,yes,yes,43,471,1,0,1,32,,598,0.158862876,0.787625418,kelp consumed during video,No,Urchin was a beast,,
-44,3-Sep-19,246,15.51602564,2,N,Pink,4,29,,53,69,69,Old,10,1930,720,107.028,94.965,yes,yes,46,153,3,1,2,36,20,622,0.663987138,0.245980707,kelp consumed during video,Yes,Corynactis was so close,,
-45,3-Sep-19,246,15.51602564,3,N,Red,2,3,,43,35,35,New,7,1930,720,59.332,57.972,no,yes,,,0,0,0,,,641,1,0,urchin never ate kelp,urchin never tried,Urchin didn't even try,,Urchin never moved
-46,3-Sep-19,246,15.51602564,4,S,Orange,3,18,,60,92,91,New,7,1930,720,63.07,62.153,no,no,,,,,,,,,,,,,,"no video, GoPro error",
-47,3-Sep-19,246,15.51602564,5,N,Control,1,0,,55,82,82,Old,10,1930,720,93.19,92.295,no,yes,9,112,1,0,1,2,,260,0.561538462,0.430769231,urchin never ate kelp,No,Urchin was a beast,"""after"" has hole (-0.264), doesn't look like consumption",4 hours video
-48,3-Sep-19,246,15.51602564,6,N,Pink,4,27,,43,35,36,New,7,1930,720,60.268,58.455,no,yes,,,0,0,0,,,588,1,0,urchin never ate kelp,urchin never tried,Urchin didn't even try,,urchin does move a lot but never touches Cory tile
-49,3-Sep-19,246,15.70987179,7,N,Pink,4,28,,47,55,55,New,7,1935,733,70.875,55.854,yes,no,,,,,,,,,,,,,,"""before"" included some shadow",
-50,3-Sep-19,246,15.70987179,8,S,Pink,4,26,,45,41,40,Old,10,1935,733,96.044,92.927,no,no,,,,,,,,,,,,,,,
-51,3-Sep-19,246,15.70987179,9,N,Orange,3,14,,45,40,40,New,7,1935,733,65.846,48.534,yes,no,,,,,,,,,,,,,,,
-52,3-Sep-19,246,15.70987179,10,S,Orange,3,17,,52,62,61,Old,10,1935,733,85.491,85.394,no,no,,,,,,,,,,,,,,,
-53,3-Sep-19,246,15.70987179,11,N,Pink,4,23,,50,57,57,New,7,1935,733,66.453,27.768,yes,no,,,,,,,,,,,,,,,
-54,3-Sep-19,246,15.70987179,12,N,Control,1,0,,46,51,51,Old,10,1935,733,70.8,63.54,yes,no,,,,,,,,,,,,,,,
-55,3-Sep-19,246,15.70987179,13,N,Control,1,0,,45,41,42,Old,10,1935,733,85.197,67.457,yes,no,,,,,,,,,,,,,,,
-56,3-Sep-19,246,15.70987179,14,N,Red,2,10,,60,102,103,New,7,1935,733,84.321,55.945,yes,no,,,,,,,,,,,,,,,
-57,4-Sep-19,247,15.40727273,7,S,Red,2,2,,58,96,99,New,8,1920,720,83.356,83.33,no,no,,,,,,,,,,,,,,,
-58,4-Sep-19,247,15.40727273,8,N,Control,1,0,,61,100,102,New,8,1920,720,73.597,45.494,yes,no,,,,,,,,,,,,,,,
-59,4-Sep-19,247,15.40727273,9,S,Pink,4,29,,46,38,37,New,8,1920,720,62.996,63.26,no,no,,,,,,,,,,,,,,,
-60,4-Sep-19,247,15.40727273,10,N,Red,2,9,,55,73,74,New,8,1920,720,70.065,69.334,no,no,,,,,,,,,,,,,,,
-61,4-Sep-19,247,15.40727273,11,N,Orange,3,18,,47,47,49,New,8,1920,720,72.326,39.031,yes,no,,,,,,,,,,,,,,,
-62,4-Sep-19,247,15.40727273,12,S,Orange,3,12,,42,32,34,New,8,1920,720,69.323,56.058,yes,no,,,,,,,,,,,,,,,
-63,4-Sep-19,247,15.40727273,13,N,Control,1,0,,46,44,44,New,8,1920,720,63.42,42.983,yes,no,,,,,,,,,,,,,,,
-64,4-Sep-19,247,15.40727273,14,N,Red,2,1,,62,102,101,New,8,1920,720,72.263,71.109,no,no,,,,,,,,,,,,,,shadow and rip ==> guesstimate,
-65,5-Sep-19,248,15.38538462,1,N,Control,1,0,,56,82,88,New,9,1920,720,69.959,56.159,yes,yes,,,0,0,0,,,241,1,0,kelp consumed AFTER video,urchin never tried,Urchin didn't even try,,4 hours video; urchin never moves
-66,5-Sep-19,248,15.38538462,2,N,Orange,3,17,,43,36,38,New,9,1920,720,79.832,58.263,yes,yes,21,506,1,0,1,14,,550,0.054545455,0.92,kelp consumed during video,No,Urchin was a beast,,polyps not out
-67,5-Sep-19,248,15.38538462,3,N,Pink,4,24,,56,88,86,New,9,1920,720,79.995,82.189,no,yes,,,12,12,0,,,609,1,0,urchin never ate kelp,Yes,Corynactis was a monster,"rip in ""after"", includes shadows, ""before"" is also a mess",really good deterrence video
-68,5-Sep-19,248,15.38538462,4,S,Pink,4,22,,58,84,86,New,9,1920,720,74.331,44.713,yes,yes,54,320,3,2,1,15,,610,0.450819672,0.524590164,kelp consumed during video,Yes,Corynactis was so close,,
-69,5-Sep-19,248,15.38538462,5,S,Pink,4,28,,60,101,102,New,9,1920,720,55.596,56.017,no,yes,,,0,0,0,,,600,1,0,urchin never ate kelp,urchin never tried,Urchin didn't even try,,urchin never moved
-70,5-Sep-19,248,15.38538462,6,N,Red,2,10,,42,36,39,New,9,1920,720,73.047,45.68,yes,yes,30,409,2,1,1,21,,627,0.314194577,0.6523126,kelp consumed during video,Yes,Corynactis was so close,,
-71,6-Sep-19,249,15.67546667,1,N,Control,1,0,,60,103,104,New,10,1910,715,62.034,32.941,yes,yes,,,0,0,0,,,328,1,0,kelp consumed AFTER video,urchin never tried,Urchin didn't even try,,5 hours video; no movement
-72,6-Sep-19,249,15.67546667,2,S,Pink,4,26,,58,87,88,New,10,1910,715,57.548,46.776,yes,yes,,,5,5,0,,,612,1,0,kelp consumed AFTER video,Yes,Corynactis was a monster,,
-73,6-Sep-19,249,15.67546667,3,S,Orange,3,13,,43,36,37,New,10,1910,715,70.615,49.372,yes,yes,18,417,2,1,1,13,,560,0.232142857,0.744642857,kelp consumed during video,Yes,Corynactis was so close,urchin lost kelp blade across Corynactis tile,Polyp behavior obvious
-74,6-Sep-19,249,15.67546667,4,S,Red,2,4,,59,92,94,New,10,1910,715,65.348,34.455,yes,yes,18,79,1,0,1,12,,516,0.823643411,0.153100775,kelp consumed during video,No,Urchin was a beast,,
-75,6-Sep-19,249,15.67546667,5,N,Pink,4,30,,56,72,76,New,10,1910,715,68.948,39.484,yes,yes,121,80,5,4,1,12,,493,0.813387424,0.162271805,kelp consumed during video,Yes,Corynactis was so close,,Polyp behavior obvious
-76,6-Sep-19,249,15.67546667,6,N,Red,2,6,,60,91,91,New,10,1930,725,60.065,60.03,no,yes,,,3,3,0,,,569,1,0,urchin never ate kelp,Yes,Corynactis was a monster,old urchin dropped on Corynactis tile,old urchin dropped on colony
+﻿Trial,Date,Julian date,Temp,Tank,Kelp,Treatment,Treatment_numb,Cory_numb,Percent,Urchin_size,Urchin_wt_b,Urchin_wt_a,Urchin_age,Urchin_starve,Start,Stop,Kelp_b,Kelp_a,Visible_consumption,Video,Time_to_kelp,Time_with_kelp,Numb_contact,Numb_deter,Numb_cross,Time_cross_first,Time_cross_avg,Total_video,Percent_alone,Percent_kelp,When_consumption,Urchin_deter,Urchin_deter_success,,Kelp comments,Video comments
+1,31-Aug-19,243,15.13025641,1,S,Orange,3,11,,55,75,72,Old,7,1920,730,129.304,115.282,yes,yes,70,275,6,1,5,58,18.75,532,0.233082707,0.516917293,kelp consumed during video,Yes,Cory was close,Orange,,
+2,31-Aug-19,243,15.13025641,2,N,Orange,3,20,,43,36,35,Old,7,1920,730,125.295,123.61,no,yes,,,4,4,0,,,576,1,0,urchin never ate kelp,Yes,Cory was beast,Orange,"""after"" includes shadows",
+3,31-Aug-19,243,15.13025641,3,S,Control,1,0,,44,43,43,Old,7,1920,730,97.843,70.075,yes,yes,7,306,1,0,1,3,,326,0.052147239,0.938650307,kelp consumed during video,No,Urchin was beast,Control,,GoPro didn't connect to BacPack
+4,31-Aug-19,243,15.13025641,4,N,Red,2,7,,49,53,52,Old,7,1920,730,122.582,104.473,yes,yes,41,463,2,1,1,15,,561,0.147950089,0.825311943,kelp consumed during video,Yes,Cory was close,Red,,
+5,31-Aug-19,243,15.13025641,5,N,Pink,4,21,,50,58,58,Old,7,1920,730,113.479,84.423,yes,yes,32,423,3,0,3,11,10.33333333,576,0.210648148,0.734375,kelp consumed during video,No,Urchin was beast,Pink,"""before"" out of focus",
+6,31-Aug-19,243,15.13025641,6,N,Orange,3,19,,44,41,41,Old,7,1920,730,119.378,105.734,yes,yes,39,306,10,1,9,20,10.42857143,622,0.3585209,0.491961415,kelp consumed during video,Yes,Cory was close,Orange,,
+7,31-Aug-19,243,15.74688312,7,N,Orange,3,15,,57,80,78,Old,7,1930,740,90.467,90.678,no,no,,,,,,,,,,,,,,Orange,,
+8,31-Aug-19,243,15.74688312,8,S,Pink,4,30,,62,97,95,Old,7,1930,740,114.098,114.75,no,no,,,,,,,,,,,,,,Pink,,
+9,31-Aug-19,243,15.74688312,9,N,Red,2,3,,48,53,50,Old,7,1930,740,108.271,108.896,no,no,,,,,,,,,,,,,,Red,"""after"" includes shadows",
+10,31-Aug-19,243,15.74688312,10,S,Red,2,8,,49,64,62,Old,7,1930,740,104.895,102.779,no,no,,,,,,,,,,,,,,Red,"""before"" out of focus, ""after"" includes shadows",
+11,31-Aug-19,243,15.74688312,11,N,Control,1,0,,60,91,89,Old,7,1930,740,118.879,90.667,yes,no,,,,,,,,,,,,,,Control,"""after"" includes shadows",
+12,31-Aug-19,243,15.74688312,12,N,Orange,3,16,,42,42,43,Old,7,1930,740,128.021,100.726,yes,no,,,,,,,,,,,,,,Orange,"""before"" out of focus",
+13,31-Aug-19,243,15.74688312,13,S,Control,1,0,,49,53,53,Old,7,1930,740,117.839,105.361,yes,no,,,,,,,,,,,,,,Control,"""before"" out of focus, ""after"" includes shadows",
+14,31-Aug-19,243,15.74688312,14,S,Pink,4,25,,54,62,60,Old,7,1930,740,88.839,87.476,no,no,,,,,,,,,,,,,,Pink,"""before"" out of focus",
+15,1-Sep-19,244,15.01782051,1,N,Red,2,8,,45,45,45,Old,8,1910,710,108.065,106.862,no,yes,,,0,0,0,,,620,1,0,urchin never ate kelp,urchin never tried,Urchin never moved,Red,,Urchin never moved
+16,1-Sep-19,244,15.01782051,2,S,Orange,3,12,,43,40,41,Old,8,1910,710,101.61,66.283,yes,yes,14,517,1,0,1,8,,594,0.116161616,0.87037037,kelp consumed during video,No,Urchin was beast,Orange,"too much measured on ""after"" ",
+17,1-Sep-19,244,15.01782051,3,N,Orange,3,16,,58,85,85,Old,8,1910,710,90.219,88.927,no,yes,32,131,9,4,5,23,11.8,608,0.649671053,0.215460526,urchin never ate kelp,Yes,Urchin was beast,Orange,shade => guesstimate,Urchin with personality
+18,1-Sep-19,244,15.01782051,4,S,Control,1,0,,48,51,51,Old,8,1910,710,90.47,88.609,no,yes,,,0,0,0,,,605,1,0,urchin never ate kelp,urchin never tried,Urchin never moved,Control,,Urchin never moved
+19,1-Sep-19,244,15.01782051,5,N,Pink,4,25,,50,60,61,Old,8,1910,710,131.331,105.565,yes,yes,15,335,3,2,1,8,,558,0.385304659,0.600358423,kelp consumed during video,Yes,Cory was close,Pink,,
+20,1-Sep-19,244,15.01782051,6,N,Red,2,9,,49,46,45,Old,8,1910,710,94.843,94.238,no,yes,,,3,3,0,,,617,1,0,urchin never ate kelp,Yes,Cory was beast,Red,,
+21,1-Sep-19,244,15.42692308,7,N,Pink,4,21,,48,54,53,Old,8,1905,705,120.037,118.857,no,no,,,,,,,,,,,,,,Pink,,
+22,1-Sep-19,244,15.42692308,8,S,Red,2,5,,57,79,79,Old,8,1905,705,122.246,122.388,no,no,,,,,,,,,,,,,,Red,,
+23,1-Sep-19,244,15.42692308,9,N,Red,2,7,,50,50,51,Old,8,1905,705,100.352,99.629,no,no,,,,,,,,,,,,,,Red,,
+24,1-Sep-19,244,15.42692308,10,N,Red,2,4,,50,55,56,Old,8,1905,705,95.666,94.129,no,no,,,,,,,,,,,,,,Red,,
+25,1-Sep-19,244,15.42692308,11,S,Control,1,0,,61,92,94,Old,8,1905,705,103.683,92.487,yes,no,,,,,,,,,,,,,,Control,,
+26,1-Sep-19,244,15.42692308,12,N,Pink,4,24,,44,34,35,Old,8,1905,705,102.07,101.742,no,no,,,,,,,,,,,,,,Pink,,
+27,1-Sep-19,244,15.42692308,13,N,Orange,3,13,,45,44,45,Old,8,1905,705,105.818,104.006,no,no,,,,,,,,,,,,,,Orange,,
+28,1-Sep-19,244,15.42692308,14,S,Control,1,0,,47,40,41,Old,8,1905,705,109.04,104.875,no,no,,,,,,,,,,,,,,Control,,
+29,2-Sep-19,245,15.4475641,1,S,Control,1,0,,59,96,98,Old,9,1915,720,90.497,54.828,yes,yes,15,272,1,0,1,7,,327,0.146788991,0.831804281,kelp consumed during video,No,Urchin was beast,Control,,GoPro not connected to BacPack
+30,2-Sep-19,245,15.4475641,2,S,Pink,4,23,,45,40,42,Old,9,1915,720,103.925,74.176,yes,yes,32,579,1,0,1,23,,642,0.062305296,0.901869159,kelp consumed during video,No,Urchin was beast,Pink,,
+31,2-Sep-19,245,15.4475641,3,S,Red,2,2,,49,62,63,Old,9,1915,720,74.209,61.512,yes,yes,25,310,12,11,1,17,,621,0.473429952,0.499194847,kelp consumed during video,Yes,Cory was close,Red,,urchin loses kelp blade at 3am
+32,2-Sep-19,245,15.4475641,4,S,Orange,3,14,,48,47,47,Old,9,1915,720,93.228,94.572,no,yes,,,0,0,0,,,544,1,0,urchin never ate kelp,urchin never tried,Urchin never moved,Orange,,Urchin never moved
+33,2-Sep-19,245,15.4475641,5,N,Orange,3,15,,53,76,75,Old,9,1915,720,84.348,56.582,yes,yes,135,475,1,0,1,120,,613,0.029363785,0.774877651,kelp consumed during video,No,Urchin was beast,Orange,,
+34,2-Sep-19,245,15.4475641,6,N,Red,2,1,,47,47,47,Old,9,1915,720,96.76,95.732,no,yes,14,557,3,1,2,10,,583,0.027444254,0.955403087,urchin never ate kelp,Yes,Urchin was beast,Red,,urchin uses kelp as a shawl
+35,2-Sep-19,245,15.63615385,7,S,Control,1,0,,52,63,63,Old,9,1920,720,93.5,62.167,yes,no,,,,,,,,,,,,,,Control,,
+36,2-Sep-19,245,15.63615385,8,S,Control,1,0,,47,49,50,Old,9,1920,720,93.728,92.887,no,no,,,,,,,,,,,,,,Control,,
+37,2-Sep-19,245,15.63615385,9,S,Orange,3,19,,45,46,47,Old,9,1920,720,101.639,73.295,yes,no,,,,,,,,,,,,,,Orange,,
+38,2-Sep-19,245,15.63615385,10,S,Orange,3,11,,54,72,73,Old,9,1920,720,80.154,39.98,yes,no,,,,,,,,,,,,,,Orange,,
+39,2-Sep-19,245,15.63615385,11,N,Pink,4,22,,53,68,70,Old,9,1920,720,93.593,53.596,yes,no,,,,,,,,,,,,,,Pink,,
+40,2-Sep-19,245,15.63615385,12,N,Red,2,6,,58,90,89,Old,9,1920,720,58.831,5.205,yes,no,,,,,,,,,,,,,,Red,,
+41,2-Sep-19,245,15.63615385,13,S,Pink,4,27,,59,83,83,Old,9,1920,720,75.53,74.962,yes,no,,,,,,,,,,,,,,Pink,,
+42,2-Sep-19,245,15.63615385,14,N,Orange,3,20,,50,57,57,Old,9,1920,720,77.009,75.542,no,no,,,,,,,,,,,,,,Orange,"""before"" and ""after"" included some shadow",
+43,3-Sep-19,246,15.51602564,1,S,Red,2,5,,60,93,93,New,7,1930,720,68.571,12.182,yes,yes,43,471,1,0,1,32,,598,0.158862876,0.787625418,kelp consumed during video,No,Urchin was beast,Red,,
+44,3-Sep-19,246,15.51602564,2,N,Pink,4,29,,53,69,69,Old,10,1930,720,107.028,94.965,yes,yes,46,153,3,1,2,36,20,622,0.663987138,0.245980707,kelp consumed during video,Yes,Cory was close,Pink,,
+45,3-Sep-19,246,15.51602564,3,N,Red,2,3,,43,35,35,New,7,1930,720,59.332,57.972,no,yes,,,0,0,0,,,641,1,0,urchin never ate kelp,urchin never tried,Urchin never moved,Red,,Urchin never moved
+46,3-Sep-19,246,15.51602564,4,S,Orange,3,18,,60,92,91,New,7,1930,720,63.07,62.153,no,no,,,,,,,,,,,,,Urchin never moved,Orange,"no video, GoPro error",
+47,3-Sep-19,246,15.51602564,5,N,Control,1,0,,55,82,82,Old,10,1930,720,93.19,92.295,no,yes,9,112,1,0,1,2,,260,0.561538462,0.430769231,urchin never ate kelp,No,Urchin was beast,Control,"""after"" has hole (-0.264), doesn't look like consumption",4 hours video
+48,3-Sep-19,246,15.51602564,6,N,Pink,4,27,,43,35,36,New,7,1930,720,60.268,58.455,no,yes,,,0,0,0,,,588,1,0,urchin never ate kelp,urchin never tried,Urchin never moved,Pink,,urchin does move a lot but never touches Cory tile
+49,3-Sep-19,246,15.70987179,7,N,Pink,4,28,,47,55,55,New,7,1935,733,70.875,55.854,yes,no,,,,,,,,,,,,,,Pink,"""before"" included some shadow",
+50,3-Sep-19,246,15.70987179,8,S,Pink,4,26,,45,41,40,Old,10,1935,733,96.044,92.927,no,no,,,,,,,,,,,,,,Pink,,
+51,3-Sep-19,246,15.70987179,9,N,Orange,3,14,,45,40,40,New,7,1935,733,65.846,48.534,yes,no,,,,,,,,,,,,,,Orange,,
+52,3-Sep-19,246,15.70987179,10,S,Orange,3,17,,52,62,61,Old,10,1935,733,85.491,85.394,no,no,,,,,,,,,,,,,,Orange,,
+53,3-Sep-19,246,15.70987179,11,N,Pink,4,23,,50,57,57,New,7,1935,733,66.453,27.768,yes,no,,,,,,,,,,,,,,Pink,,
+54,3-Sep-19,246,15.70987179,12,N,Control,1,0,,46,51,51,Old,10,1935,733,70.8,63.54,yes,no,,,,,,,,,,,,,,Control,,
+55,3-Sep-19,246,15.70987179,13,N,Control,1,0,,45,41,42,Old,10,1935,733,85.197,67.457,yes,no,,,,,,,,,,,,,,Control,,
+56,3-Sep-19,246,15.70987179,14,N,Red,2,10,,60,102,103,New,7,1935,733,84.321,55.945,yes,no,,,,,,,,,,,,,,Red,,
+57,4-Sep-19,247,15.40727273,7,S,Red,2,2,,58,96,99,New,8,1920,720,83.356,83.33,no,no,,,,,,,,,,,,,,Red,,
+58,4-Sep-19,247,15.40727273,8,N,Control,1,0,,61,100,102,New,8,1920,720,73.597,45.494,yes,no,,,,,,,,,,,,,,Control,,
+59,4-Sep-19,247,15.40727273,9,S,Pink,4,29,,46,38,37,New,8,1920,720,62.996,63.26,no,no,,,,,,,,,,,,,,Pink,,
+60,4-Sep-19,247,15.40727273,10,N,Red,2,9,,55,73,74,New,8,1920,720,70.065,69.334,no,no,,,,,,,,,,,,,,Red,,
+61,4-Sep-19,247,15.40727273,11,N,Orange,3,18,,47,47,49,New,8,1920,720,72.326,39.031,yes,no,,,,,,,,,,,,,,Orange,,
+62,4-Sep-19,247,15.40727273,12,S,Orange,3,12,,42,32,34,New,8,1920,720,69.323,56.058,yes,no,,,,,,,,,,,,,,Orange,,
+63,4-Sep-19,247,15.40727273,13,N,Control,1,0,,46,44,44,New,8,1920,720,63.42,42.983,yes,no,,,,,,,,,,,,,,Control,,
+64,4-Sep-19,247,15.40727273,14,N,Red,2,1,,62,102,101,New,8,1920,720,72.263,71.109,no,no,,,,,,,,,,,,,,Red,shadow and rip ==> guesstimate,
+65,5-Sep-19,248,15.38538462,1,N,Control,1,0,,56,82,88,New,9,1920,720,69.959,56.159,yes,yes,,,0,0,0,,,241,1,0,kelp consumed AFTER video,urchin never tried,Urchin was beast,Control,,4 hours video; urchin never moves
+66,5-Sep-19,248,15.38538462,2,N,Orange,3,17,,43,36,38,New,9,1920,720,79.832,58.263,yes,yes,21,506,1,0,1,14,,550,0.054545455,0.92,kelp consumed during video,No,Urchin was beast,Orange,,polyps not out
+67,5-Sep-19,248,15.38538462,3,N,Pink,4,24,,56,88,86,New,9,1920,720,79.995,82.189,no,yes,,,12,12,0,,,609,1,0,urchin never ate kelp,Yes,Cory was beast,Pink,"rip in ""after"", includes shadows, ""before"" is also a mess",really good deterrence video
+68,5-Sep-19,248,15.38538462,4,S,Pink,4,22,,58,84,86,New,9,1920,720,74.331,44.713,yes,yes,54,320,3,2,1,15,,610,0.450819672,0.524590164,kelp consumed during video,Yes,Cory was close,Pink,,
+69,5-Sep-19,248,15.38538462,5,S,Pink,4,28,,60,101,102,New,9,1920,720,55.596,56.017,no,yes,,,0,0,0,,,600,1,0,urchin never ate kelp,urchin never tried,Urchin never moved,Pink,,urchin never moved
+70,5-Sep-19,248,15.38538462,6,N,Red,2,10,,42,36,39,New,9,1920,720,73.047,45.68,yes,yes,30,409,2,1,1,21,,627,0.314194577,0.6523126,kelp consumed during video,Yes,Cory was close,Red,,
+71,6-Sep-19,249,15.67546667,1,N,Control,1,0,,60,103,104,New,10,1910,715,62.034,32.941,yes,yes,,,0,0,0,,,328,1,0,kelp consumed AFTER video,urchin never tried,Urchin was beast,Control,,5 hours video; no movement
+72,6-Sep-19,249,15.67546667,2,S,Pink,4,26,,58,87,88,New,10,1910,715,57.548,46.776,yes,yes,,,5,5,0,,,612,1,0,kelp consumed AFTER video,Yes,Cory was close,Pink,,
+73,6-Sep-19,249,15.67546667,3,S,Orange,3,13,,43,36,37,New,10,1910,715,70.615,49.372,yes,yes,18,417,2,1,1,13,,560,0.232142857,0.744642857,kelp consumed during video,Yes,Cory was close,Orange,urchin lost kelp blade across Corynactis tile,Polyp behavior obvious
+74,6-Sep-19,249,15.67546667,4,S,Red,2,4,,59,92,94,New,10,1910,715,65.348,34.455,yes,yes,18,79,1,0,1,12,,516,0.823643411,0.153100775,kelp consumed during video,No,Urchin was beast,Red,,
+75,6-Sep-19,249,15.67546667,5,N,Pink,4,30,,56,72,76,New,10,1910,715,68.948,39.484,yes,yes,121,80,5,4,1,12,,493,0.813387424,0.162271805,kelp consumed during video,Yes,Cory was close,Pink,,Polyp behavior obvious
+76,6-Sep-19,249,15.67546667,6,N,Red,2,6,,60,91,91,New,10,1930,725,60.065,60.03,no,yes,,,3,3,0,,,569,1,0,urchin never ate kelp,Yes,Cory was beast,Red,old urchin dropped on Corynactis tile,old urchin dropped on colony

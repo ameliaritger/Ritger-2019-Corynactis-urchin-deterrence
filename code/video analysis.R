@@ -5,7 +5,9 @@ library(readxl)
 library(tidyverse)
 
 # LOAD DATA
-data <- read_excel("data/raw.xlsx", sheet = "Kelp consumption")
+data <- read.csv("data/raw.csv")
+
+data<-data[data$Urchin.deterred.during.video!="urchin never tried",]
 
 # TIDY DATA
 # remove trials without videos
@@ -14,6 +16,11 @@ data <- subset(data, !`Tank number`>6 & !`Trial number`==46)
 data <- subset(data, !data$`Urchin deterred during video?`=="urchin never tried")
 # To compare across treatments, presence/absence of Corynactis
 data$corynactis_binary <- ifelse(data$`Treatment Number`>1, "present", "absent")
+
+# Create variables: Kelp consumed, percent kelp consumed
+data <- data %>%
+  mutate(area_consumed_cm2=(`Kelp Before (cm^2)`-`Kelp After (cm^2)`)) %>%
+  mutate(percent_consumed=(area_consumed_cm2/`Kelp Before (cm^2)`))
 
 # assign variables
 Y1 <- data$`Time to reach kelp (min)`
@@ -30,17 +37,20 @@ Y3name <- as.character("Time to cross tile (first, min)")
 Y4name <- as.character("% time spent with kelp")
 
 #Univariate analysis for Y
-hist(Y4, main="", xlab=Y4name)
+hist(Y2, main="", xlab=Y2name)
 boxplot(Y4, xlab=Y4name)
 qqnorm(Y)
 qqline(Y)
 
+
+
+plot(data$`Times deterred from tile`~as.factor(data$Treatment))
+data$`Times deterred from tile`
+class(data$`Times deterred from tile`)
+
+
 plot(data2$`Urchin Size (mm)`~data2$`Total video time (min)`)
 plot(data$`Urchin Size (mm)`~data$`Total video time (min)`)
 
-# Create variables: Kelp consumed, percent kelp consumed
-data <- data %>%
-  mutate(area_consumed_cm2=(`Kelp Before (cm^2)`-`Kelp After (cm^2)`)) %>%
-  mutate(percent_consumed=(area_consumed_cm2/`Kelp Before (cm^2)`))
 
 plot(data$area_consumed_cm2~Y4, xlab=Yname)

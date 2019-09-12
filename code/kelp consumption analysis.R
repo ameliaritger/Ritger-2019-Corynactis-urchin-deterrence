@@ -4,6 +4,7 @@
 library(tidyverse)
 library(zoo)
 library(readxl)
+library(GGally)
 
 ## LOAD DATA
 data <- read.csv("data/raw.csv")
@@ -144,7 +145,18 @@ red <- red %>%
 red$sum #doesn't look like there's any bias amongst tiles... some are always eat = 0, some are sometimes 1/0, one is always 1
 
 
+
+
+
+
+
+##############################################
 # how about mixed effects logistic regression?
+ggpairs(data[,c("Julian.date", "Kelp", "Urchin_starve", "Tank")])
+
+
+
+
 m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb), data = data_red, family = binomial, control = glmerControl(optimizer = "bobyqa"),
            nAGQ = 10)
 print(m)

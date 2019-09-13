@@ -3,7 +3,6 @@
 
 library(tidyverse)
 library(zoo)
-library(readxl)
 
 ## LOAD DATA
 data <- read.csv("data/raw.csv")
@@ -144,6 +143,8 @@ red <- red %>%
 red$sum #doesn't look like there's any bias amongst tiles... some are always eat = 0, some are sometimes 1/0, one is always 1
 
 
+
+
 # how about mixed effects logistic regression?
 m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb), data = data_red, family = binomial, control = glmerControl(optimizer = "bobyqa"),
            nAGQ = 10)
@@ -212,8 +213,10 @@ bigres <- do.call(cbind, res[success])
 
 
 ####################################################
-# Tiered Analysis: Mixed-model - Among the urchins that ate, how does Corynactis matter?
+# Tiered Analysis: Mixed-model - Among the urchins that ate, how does Corynactis matter in how much they ate?
 ####################################################
+
+#something like lm(area consumed) compared to binary analysis above using glm(proportion data)
 
 # create new data frame for instances where urchins ate something (not nothing)
 data_consumption <- subset(data, data$area_corrected>0)
@@ -279,6 +282,8 @@ plot(Y~tloc, ylab=Yname)
 plot(Y~starv, ylab=Yname)
 plot(Y~used, ylab=Yname)
 
+
+
 ####################################################
 # General two-way ANOVA: Mixed Model
 ####################################################
@@ -305,3 +310,7 @@ anova(m3)
 anova(m3, ddf="lme4")
 st <- step(m3)
 plot(m3)
+
+
+
+summary((glm(data$consumption_binary~treat, family=binomial)))

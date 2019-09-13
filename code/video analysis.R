@@ -1,7 +1,6 @@
 ## Data analysis for Corynactis-Urchin deterrence experiment - video trials ##
 ## Code by Amelia Ritger at UCSB on September 10, 2019 ##
 
-library(readxl)
 library(tidyverse)
 library(ggplot2)
 library(GGally)
@@ -46,7 +45,7 @@ treat <- as.factor(data$Treatment)
 cory <- as.factor(data$corynactis_binary)
 tile <- data$Cory_numb
 
-Yname <- as.character("%percent kelp")
+Yname <- as.character("Deterrence events/hr")
 
 #Univariate analysis for Y
 hist(Y, main="", xlab=Yname)

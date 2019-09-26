@@ -7,7 +7,7 @@ library(readxl)
 library(GGally)
 
 ## LOAD DATA
-data <- read.csv("data/raw.csv")
+data <- read.csv("data/raw.csv") 
 
 ## TIDY DATA
 # my own OCD, fix "Trial" issue
@@ -154,7 +154,16 @@ red$sum #doesn't look like there's any bias amongst tiles... some are always eat
 # how about mixed effects logistic regression?
 ggpairs(data[,c("Julian.date", "Kelp", "Urchin_starve", "Tank")])
 
+########## with bart
+library(lme4)
+data$Cory_numb_f <- as.factor(data$Cory_numb)
+m1 <- glm(consumption_binary ~ Treatment, data=data, family=binomial)
+m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb_f), data = data, family = binomial)
+summary(m1)
 
+hist(resid(m))
+######## with bart                                         
+                                        
 
 
 m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb), data = data_red, family = binomial, control = glmerControl(optimizer = "bobyqa"),
@@ -304,7 +313,11 @@ require(boot)
 
 summary(Y)
 
-m1 <- glmer(percent_corrected ~ (1|tile) + treat, family = "binomial", weights= `Kelp After (cm^2)`, data = data)
+m1 <- glmer(percent_corrected ~ (1|tile) + treat, weights= `Kelp After (cm^2)`, data = data)
+
+################### with bart
+gls?m?(kelp_after, weights = kelp before #normal distrib), fitting beta distrib after removing zeros, no random effects
+      
   
   Y2~treat + (1|tile), family=binomial(link="logit"))
 summary(m1)

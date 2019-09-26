@@ -39,35 +39,6 @@ data$experiment_location <- ifelse(data$Tank>6, "Balcony", "Lab")
 # keep all control values rather than average them (if I pursue averaging repeated tiles), assign each control trial a unique number
 #data$Cory_numb[data$Cory_numb==0] <- c(-1:-15)
 
-# because not every tile was actually used twice (thanks to urchins not moving, etc), get the total counts each tile was used and add it as a column to data frame
-data <- data[order(data$Cory_numb),] #sort whole data frame by tile number
-df <- data # separate this organization from the whole data frame in case you mess something up
-df <- df[order(df$Cory_numb),] #sort subsetted data frame by tile number
-df$Cory_numb[df$Cory_numb==0] <- c(-1:-15) #change all controls to unique negative numbers to get count values
-new <- count(df, Cory_numb) #count values for each tile number
-duptimes <- c(new$n) #how many replicates I want of each row
-indx <- rep(1:nrow(new), duptimes) # Create an index of the rows I want with duplications
-dupdf <- new[indx,] # Use that index to generate new data frame
-dupdf$Cory_numb[1:15] <-0 #change control values back to tile number "0"
-dupdf$n[1:15] <- 15 #change duplications for control tiles to 15
-data$count_per_tile <- dupdf$n #add the counts to the whole data frame
-
-#now put it all together
-data_avg <- data %>%
-  group_by(Cory_numb) %>%                                     # group tile numbers together
-  mutate(success=sum(consumption_binary, na.rm=TRUE)) %>%     #number of successes
-  mutate(failure=ifelse(count_per_tile==2, abs(success-2), ifelse(count_per_tile==1,abs(success-1), 3))) %>%  #number of failures, given number of times tile was used
-  mutate(binary_avg=mean(consumption_binary, na.rm=TRUE)) %>% #average successes/total attempts
-  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # mean kelp consumption of each tile group
-  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>%  # mean % kelp consumption of each tile group
-  ungroup() %>%                                               # ungroup data REALLY IMPT when using group_by
-  distinct(Cory_numb, .keep_all = TRUE) %>%                   # remove duplicate tiles
-  select(Treatment, Cory_numb, urchin_avg_g, success, failure, binary_avg, count_per_tile, Kelp_b, Kelp_a, area_corrected) # clean up! extract only columns you want
-
-#check your work
-t1<-table(data_avg$Treatment,data_avg$failure)
-t1 <-table(data$Cory_numb, data$consumption_binary) # nice work!
-
 # create new data frame for instances where urchins ate something (not nothing)
 data_consumption <- subset(data, data$area_corrected>0)
 
@@ -94,8 +65,11 @@ used <- as.factor(data$Urchin_age)
 eat <- data$consumption_binary
 cory <- data$corynactis_binary
 
+#visualize at relationships among variables
+ggpairs(data[,c("Julian.date", "Kelp", "Urchin_starve", "Tank")])
+
 ####################################################
-# Tiered Analysis: Chi-Square test/glm - Urchins that ate vs didn't eat kelp
+# Tiered Analysis: Urchins that ate vs didn't eat kelp
 ####################################################
 library(corrplot)
 library(boot)
@@ -134,10 +108,8 @@ t1 <- table(treat_red, eat_red)
 cs <- chisq.test(treat_red,eat_red) #p = 0.0428, yes/no consumption and red/control are dependent
 prop.test(cs$observed) #proportion test - proportions amongst groups are the same
 
-
-###### BUT CHI-SQUARED TEST ASSUMES INDEPENDENCE BETWEEN SAMPLES! AND WE HAVE REPLICATES AMONG TILES
-#so...
-#bootstrap amongst tile replicates? none of the following accomplishes this
+#BUT CHI-SQUARED TEST ASSUMES INDEPENDENCE BETWEEN SAMPLES! AND WE HAVE REPLICATES AMONG TILES
+#so... bootstrap amongst tile replicates?
 Observed=cs$observed[2,]
 Expected=round(cs$expected[2,],2)
 boot_r <- data.frame(cbind(Observed, Expected))
@@ -156,43 +128,6 @@ chq.mboot<-boot(boot_c, statistic=achisq.pboot, sim="parametric", ran.gen=multin
 plot(chq.mboot)#Display results
 chq.perboot<-boot(boot_c, statistic=achisq.boot, R=1000)
 plot(chq.perboot)
-
-
-# total "eat vs not eat 0-1" for each tile - to visualize
-red <- red %>%
-  group_by(Tile) %>%                                     # group tile numbers together
-  mutate(sum=sum(Eat, na.rm=TRUE)) %>%
-  mutate(avg=mean(Eat, na.rm=TRUE)) %>%
-  ungroup() %>%                                                        # ungroup data REALLY IMPT when using group_by
-  distinct(Tile, .keep_all = TRUE)                       # remove duplicate tiles
-red$sum #doesn't look like there's any bias amongst tiles... some are always eat = 0, some are sometimes 1/0, one is always 1
-
-
-
-
-##############################################
-# how about mixed effects logistic regression?
-ggpairs(data[,c("Julian.date", "Kelp", "Urchin_starve", "Tank")])
-
-########## with bart
-library(lme4)
-data$Cory_numb_f <- as.factor(data$Cory_numb)
-m1 <- glm(consumption_binary ~ Treatment, data=data, family=binomial)
-m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb_f), data = data, family = binomial)
-summary(m1)
-
-hist(resid(m))
-######## with bart                                         
-                                        
-
-
-m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb), data = data_red, family = binomial, control = glmerControl(optimizer = "bobyqa"),
-           nAGQ = 10)
-print(m)
-se <- sqrt(diag(vcov(m)))
-#table of estimates with 95% CI
-(tab <- cbind(Est = fixef(m), LL = fixef(m) - 1.96 * se, UL = fixef(m) + 1.96 *
-                se))
 
 #next step - multilevel bootstrapping
 sampler <- function(dat, clustervar, replace = TRUE, reps = 1) {
@@ -250,6 +185,58 @@ bigres <- do.call(cbind, res[success])
 
 # calculate 2.5th and 97.5th percentiles for 95% CI
 (ci <- t(apply(bigres, 1, quantile, probs = c(0.025, 0.975))))
+
+
+##############################################
+# Logistic regression with binomial/bernoulli
+## Aight. Let's look at the effect of color on whether or not urchins ate, "averaged" amongst tiles
+# because not every tile was actually used twice (thanks to urchins not moving, etc), get the total counts each tile was used and add it as a column to data frame
+data <- data[order(data$Cory_numb),] #sort whole data frame by tile number
+df <- data # separate this organization from the whole data frame in case you mess something up
+df <- df[order(df$Cory_numb),] #sort subsetted data frame by tile number
+df$Cory_numb[df$Cory_numb==0] <- c(-1:-15) #change all controls to unique negative numbers to get count values
+new <- count(df, Cory_numb) #count values for each tile number
+duptimes <- c(new$n) #how many replicates I want of each row
+indx <- rep(1:nrow(new), duptimes) # Create an index of the rows I want with duplications
+dupdf <- new[indx,] # Use that index to generate new data frame
+dupdf$Cory_numb[1:15] <-0 #change control values back to tile number "0"
+dupdf$n[1:15] <- 15 #change duplications for control tiles to 15
+data$count_per_tile <- dupdf$n #add the counts to the whole data frame
+
+#now put it all together 
+data_avg <- data %>%
+  group_by(Cory_numb) %>%                                     # group tile numbers together
+  mutate(success=sum(consumption_binary, na.rm=TRUE)) %>%     #number of successes
+  mutate(failure=ifelse(count_per_tile==2, abs(success-2), ifelse(count_per_tile==1,abs(success-1), 3))) %>%  #number of failures, given number of times tile was used
+  mutate(binary_avg=mean(consumption_binary, na.rm=TRUE)) %>% #average successes/total attempts
+  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # mean kelp consumption of each tile group
+  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>%  # mean % kelp consumption of each tile group
+  ungroup() %>%                                               # ungroup data REALLY IMPT when using group_by
+  distinct(Cory_numb, .keep_all = TRUE) %>%                   # remove duplicate tiles
+  select(Treatment, Cory_numb, urchin_avg_g, success, failure, binary_avg, count_per_tile, Kelp_b, Kelp_a, area_corrected) # clean up! extract only columns you want
+
+#check your work
+t1<-table(data_avg$Treatment,data_avg$failure)
+t1 <-table(data$Cory_numb, data$consumption_binary) # nice work!
+
+#now to create the model
+library(lme4)
+#treating the data as bernoulli...but m1 here doesn't address non-independence of each trial
+#data$consumption_yn <- ifelse(data$consumption_binary>0, "Yes", "No")
+#data_bern <- data[c("Treatment", "Cory_numb", "consumption_binary", "consumption_yn")]
+#m1 <- glm(consumption_binary ~ Treatment + Cory_numb, family = binomial, data = data_bern)
+#m2 <- glm(consumption_binary ~ Treatment, family = binomial, data = data_bern)
+
+#this is actually realistically treating the data as bernoulli, sucesses given failures amongst treatments and tiles
+m1 <- glm(cbind(success, count_per_tile-success) ~ Treatment, family = binomial , data = data_avg)
+summary(m1) 
+#red color morphs are significantly different from control tiles, 
+
+#data$Cory_numb_f <- as.factor(data$Cory_numb)
+#m <- glmer(consumption_binary ~ Treatment + (1 | Cory_numb_f), data = data, family = binomial)
+
+
+
 
 
 ####################################################

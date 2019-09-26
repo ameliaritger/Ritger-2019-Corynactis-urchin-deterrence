@@ -3,7 +3,6 @@
 
 library(tidyverse)
 library(zoo)
-library(readxl)
 library(GGally)
 
 ## LOAD DATA
@@ -147,9 +146,6 @@ red$sum #doesn't look like there's any bias amongst tiles... some are always eat
 
 
 
-
-
-
 ##############################################
 # how about mixed effects logistic regression?
 ggpairs(data[,c("Julian.date", "Kelp", "Urchin_starve", "Tank")])
@@ -233,8 +229,10 @@ bigres <- do.call(cbind, res[success])
 
 
 ####################################################
-# Tiered Analysis: Mixed-model - Among the urchins that ate, how does Corynactis matter?
+# Tiered Analysis: Mixed-model - Among the urchins that ate, how does Corynactis matter in how much they ate?
 ####################################################
+
+#something like lm(area consumed) compared to binary analysis above using glm(proportion data)
 
 # create new data frame for instances where urchins ate something (not nothing)
 data_consumption <- subset(data, data$area_corrected>0)
@@ -300,6 +298,8 @@ plot(Y~tloc, ylab=Yname)
 plot(Y~starv, ylab=Yname)
 plot(Y~used, ylab=Yname)
 
+
+
 ####################################################
 # General two-way ANOVA: Mixed Model
 ####################################################
@@ -330,3 +330,7 @@ anova(m3)
 anova(m3, ddf="lme4")
 st <- step(m3)
 plot(m3)
+
+
+
+summary((glm(data$consumption_binary~treat, family=binomial)))

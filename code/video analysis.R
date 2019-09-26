@@ -1,10 +1,10 @@
 ## Data analysis for Corynactis-Urchin deterrence experiment - video trials ##
 ## Code by Amelia Ritger at UCSB on September 10, 2019 ##
 
-library(readxl)
 library(tidyverse)
 library(ggplot2)
 library(GGally)
+library(lmerTest)
 
 # LOAD DATA
 data <- read.csv("data/raw.csv")
@@ -18,6 +18,7 @@ data <- subset(data, !Tank>6 & !Trial==46)
 data <- subset(data, !data$Urchin_deter_success=="Urchin never moved")
 # To compare across treatments, presence/absence of Corynactis
 data$corynactis_binary <- ifelse(data$Treatment_numb>1, "present", "absent")
+data$cross_binary <- ifelse(data$Numb_cross>0, 1, 0)
 # Standardize "instances of action" across trials because different video lengths
 data <- data %>%
   mutate(contact_per_hr=((Numb_contact/Total_video)*60)) %>%
@@ -38,17 +39,23 @@ Y <- (data$deter_per_hr)
 Y <- (data$cross_per_hr)
 Y <- data$percent_deter
 Y <- data$percent_cross
+Y <- data$cross_binary
 outcome <- factor(as.factor(data$Urchin_deter_success))
 treat <- as.factor(data$Treatment)
 cory <- as.factor(data$corynactis_binary)
+tile <- data$Cory_numb
 
-Yname <- as.character("log10(number of deterrences/hr")
+Yname <- as.character("Deterrence events/hr")
 
 #Univariate analysis for Y
 hist(Y, main="", xlab=Yname)
 boxplot(Y, xlab=Yname)
 qqnorm(Y)
 qqline(Y)
+
+summary(glm(Y~treat, family=binomial))
+
+
 
 #look for correlations among Ys
 ggpairs(data[, c("Time_to_kelp", "Time_cross_first", "Percent_alone", "Percent_kelp", "contact_per_min", "deter_per_min", "cross_per_min")])
@@ -63,7 +70,7 @@ a<-plot(b, ylab=Yname, xlab="Treatment")
 ggsave("figures/treatment_percentkelp.pdf",a,width=5,height=5)
 summary(lm(b))
 TukeyHSD(aov(lm(b))) 
-
+anova(lm(b))
 
 ####################################################
 # Chi-Square test - How does treatment type affect outcome? 

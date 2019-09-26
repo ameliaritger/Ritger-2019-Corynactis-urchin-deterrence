@@ -6,7 +6,7 @@ library(zoo)
 library(GGally)
 
 ## LOAD DATA
-data <- read.csv("data/raw.csv") 
+data <- read.csv("data/raw.csv")
 
 ## TIDY DATA
 # my own OCD, fix "Trial" issue
@@ -37,13 +37,36 @@ data <- data %>%
 data$experiment_location <- ifelse(data$Tank>6, "Balcony", "Lab")
 # take averages (kelp consumption) of each tile, create new data frame from subsetted averages
 # keep all control values rather than average them (if I pursue averaging repeated tiles), assign each control trial a unique number
-data$Cory_numb[data$Cory_numb==0] <- c(-1:-15)
+#data$Cory_numb[data$Cory_numb==0] <- c(-1:-15)
+
+# because not every tile was actually used twice (thanks to urchins not moving, etc), get the total counts each tile was used and add it as a column to data frame
+data <- data[order(data$Cory_numb),] #sort whole data frame by tile number
+df <- data # separate this organization from the whole data frame in case you mess something up
+df <- df[order(df$Cory_numb),] #sort subsetted data frame by tile number
+df$Cory_numb[df$Cory_numb==0] <- c(-1:-15) #change all controls to unique negative numbers to get count values
+new <- count(df, Cory_numb) #count values for each tile number
+duptimes <- c(new$n) #how many replicates I want of each row
+indx <- rep(1:nrow(new), duptimes) # Create an index of the rows I want with duplications
+dupdf <- new[indx,] # Use that index to generate new data frame
+dupdf$Cory_numb[1:15] <-0 #change control values back to tile number "0"
+dupdf$n[1:15] <- 15 #change duplications for control tiles to 15
+data$count_per_tile <- dupdf$n #add the counts to the whole data frame
+
+#now put it all together
 data_avg <- data %>%
   group_by(Cory_numb) %>%                                     # group tile numbers together
-  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # take mean kelp consumption of each tile group
-  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>% # take mean % kelp consumption of each tile group
-  ungroup() %>%                                                        # ungroup data REALLY IMPT when using group_by
-  distinct(Cory_numb, .keep_all = TRUE)                       # remove duplicate tiles
+  mutate(success=sum(consumption_binary, na.rm=TRUE)) %>%     #number of successes
+  mutate(failure=ifelse(count_per_tile==2, abs(success-2), ifelse(count_per_tile==1,abs(success-1), 3))) %>%  #number of failures, given number of times tile was used
+  mutate(binary_avg=mean(consumption_binary, na.rm=TRUE)) %>% #average successes/total attempts
+  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # mean kelp consumption of each tile group
+  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>%  # mean % kelp consumption of each tile group
+  ungroup() %>%                                               # ungroup data REALLY IMPT when using group_by
+  distinct(Cory_numb, .keep_all = TRUE) %>%                   # remove duplicate tiles
+  select(Treatment, Cory_numb, urchin_avg_g, success, failure, binary_avg, count_per_tile, Kelp_b, Kelp_a, area_corrected) # clean up! extract only columns you want
+
+#check your work
+t1<-table(data_avg$Treatment,data_avg$failure)
+t1 <-table(data$Cory_numb, data$consumption_binary) # nice work!
 
 # create new data frame for instances where urchins ate something (not nothing)
 data_consumption <- subset(data, data$area_corrected>0)
@@ -110,6 +133,7 @@ tile_red <- data_red$Cory_numb
 t1 <- table(treat_red, eat_red)
 cs <- chisq.test(treat_red,eat_red) #p = 0.0428, yes/no consumption and red/control are dependent
 prop.test(cs$observed) #proportion test - proportions amongst groups are the same
+
 
 ###### BUT CHI-SQUARED TEST ASSUMES INDEPENDENCE BETWEEN SAMPLES! AND WE HAVE REPLICATES AMONG TILES
 #so...

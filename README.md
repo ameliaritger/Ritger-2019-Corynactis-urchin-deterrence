@@ -12,17 +12,17 @@ This repo is maintained by Stier Lab graduate student Amelia Ritger (GitHub: [@a
 
 file name | analysis overview | description 
 ---|---|-----------
-kelp consumption analysis.R | Analyze kelp consumption | This works through data organization and analysis of urchin foraging behavior minus video analysis; analysis with mixed model ANOVA, chi-squared test.
+kelp consumption analysis.R | Analyze kelp consumption | This works through data organization and analysis of urchin foraging behavior minus video analysis; analysis using logistic regression treating binary kelp consumption (yes/no) as a Bernoulli distribution and mixed model ANOVA treating tile as a random effect in kelp consumption by urchins
 video analysis.R | Analyze trial videos | This works through data organization and analysis of urchin foraging behavior using videos shot by GoPro Hero 3+; each tile containing Corynactis was subject to one trial for video analysis.
 water temperature.R | Average water temperatures | This works through data analysis averaging water temperature during each day experiments were run, separated by location (either campus point wet lab or Marine Biotech balcony.
 power test.R | Power test | This uses data from Xavius Boone's 2019 OGC REU experiment (Github link: [@Boone-2019-urchin-anemone-fed-unfed](https://github.com/stier-lab/Boone-2019-urchin-anemone-fed-unfed)) to run a power test to estimate minimum sample sizes needed to find significance in the data.
 
 # Data 
-*/data/raw.xlsx*  raw data
+*/data/raw.csv*  raw data
 
-*/data/kelp/*  kelp blade images before and after experiment
+*/data/kelp/*  kelp blade images before and after experiment, organized by date
 
-# Curious what the experiment look like?
+# Curious what the experiment looks like?
 Purple urchin in contact with Corynactis californica on settlement tiles
 ![Alt text](/media/Corynactis_urchin.jpg?raw=true)
 

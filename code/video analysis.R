@@ -164,10 +164,23 @@ video$deter_corrected <- ifelse(video$percent_deter=="NaN", 0, video$percent_det
 deter <- video %>%
   dplyr::select(Treatment, corynactis_binary, deter_corrected, urchin_avg_g, Urchin_size)
 Y <- deter$deter_corrected
-X <- deter$corynactis_binary
+X <- as.factor(deter$corynactis_binary)
 hist(Y)
 qqPlot(Y)
 ## >> there are lots of zeros and ones, need to correct for that or account for that in the analysis
+
+library(gamlss)
+b1 <- gamlss(Y~X,  family = BEINF, trace = F) #BEINF because zero and one values are present in beta distribution
+summary(b1)
+
+means_b1 <- lpred(b1, type='response', what='mu', se.fit=T)
+
+df_fit <- data.frame(CORY = deter$corynactis_binary, M = means_b1$fit, SE = means_b1$se.fit)
+
+ggplot(df_fit, aes(CORY, M)) + geom_pointrange(aes(ymin=M-SE, ymax=M+SE)) + 
+  labs(x="Corynactis presence/absence",y="% contacts that resulted in deterrence")# +
+  scale_y_continuous(labels=scales::percent)
+## something doesn't look right, take a look at this later.
 
 ####################################################
 # Type of Corynactis: effect on % of contacts that resulted in deterrence ("percent_deter")? (urchin size effect?)
@@ -180,7 +193,7 @@ qqPlot(Y)
 ####################################################
 ###Analysis I still want to do
 ####################################################
-#now let's plot these possibly correlated variables
+#let's plot these possibly correlated variables
 #urchin_deter/percent_corrected and kelp location
 #urchin_avg and percent_alone/percent_kelp/date/Treatment
 deter <- video$Urchin_deter

@@ -44,7 +44,7 @@ video <- video %>%
   mutate(percent_cross=(cross_per_hr/contact_per_hr))
 # Clean up data frame, only keep variables you want to work with
 video <- video %>%
-  select(Julian.date, Kelp, urchin_avg_g, Treatment, corynactis_binary, consumption_binary, area_corrected, percent_corrected, Time_cross_first, Percent_alone, Percent_kelp, When_consumption, Urchin_deter, Urchin_deter_success, cross_binary, contact_per_hr, deter_per_hr, cross_per_hr, percent_deter, percent_cross)
+  select(Julian.date, Kelp, urchin_avg_g, Treatment, corynactis_binary, consumption_binary, area_corrected, percent_corrected, Time_cross_first, Percent_alone, Percent_kelp, When_consumption, Urchin_deter, Urchin_deter_success, contact_per_hr, deter_per_hr, cross_per_hr, percent_deter, percent_cross)
 
 ## VISUALIZE DATA
 #look for correlations among variables
@@ -57,7 +57,7 @@ ggpairs(video[, c("Julian.date", "Kelp", "urchin_avg_g", "consumption_binary", "
 #interesting things to look at separately - # deterrence, # crosses, time to cross tile
 
 ####################################################
-# Chi-Square test - How does presence of Corynactis affect outcome? 
+# Chi-Square test - How does presence of Corynactis affect "outcome" (see data frame)? 
 ####################################################
 library(corrplot)
 X <- as.factor(video$corynactis_binary)
@@ -68,7 +68,7 @@ cs <- chisq.test(X, outcome) #p = 0.0393, yes/no Corynactis and outcome are depe
 # Urchins always crossed tile when it didn't have Corynactis significantly more than expected
 
 ####################################################
-# Chi-Square test - How does treatment type affect outcome?
+# Chi-Square test - How does treatment type affect "outcome" (see data frame)?
 ####################################################
 X <- as.factor(video$Treatment)
 
@@ -87,8 +87,22 @@ round(contrib, 3) #visualize % contribution of pearsons residuals for each varia
 # treatment type doesn't affect outcome
 
 ####################################################
+###Analysis I still want to do
+####################################################
+# How does presence of Corynactis affect whether or not urchin was deterred (regardless of ultimate outcome)?
+video$deter_binary <- ifelse(video$Urchin_deter=="Yes", 1, 0)
+
+m1 <- glm(deter_binary ~ Treatment, family = binomial, data=video)
+summary(m1) 
+
+# How does type of Corynactis affect whether or not urchin was deterred (regardless of ultimate outcome)?
+#Presence/Type of Corynactis: effect on time to cross tile (urchin size effect?)
+#Time with kelp: correlation with amount of kelp consumed? (urchin size effect?)
+# Presence/Type of Corynactis: effect on % of contacts that resulted in deterrence ("percent_deter")? (urchin size effect?)
+
+####################################################
 #now let's plot these possibly correlated variables
-#urchin_deter/percent_corrected and kelp
+#urchin_deter/percent_corrected and kelp location
 #urchin_avg and percent_alone/percent_kelp/date/Treatment
 deter <- video$Urchin_deter
 kelp_percent <- video$percent_corrected
@@ -98,6 +112,23 @@ percent_alone <- video$Percent_alone
 percent_kelp <- video$Percent_kelp
 date <- video$Julian.date
 treat <- video$Treatment
+
+par(mfrow=c(1,5))
+for(i in 7:11) {
+  boxplot(video[,i],main=names(video)[i])
+}
+for(i in 15:19) {
+  boxplot(video[,i],main=names(video)[i])
+}
+
+
+
+
+
+
+
+
+
 
 
 # assign variables

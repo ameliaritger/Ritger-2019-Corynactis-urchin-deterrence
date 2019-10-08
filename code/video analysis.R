@@ -5,6 +5,7 @@ library(tidyverse)
 library(ggplot2)
 library(GGally)
 #library(lmerTest)
+library(janitor) #run clean_names()!!
 
 # LOAD DATA
 video <- read.csv("data/raw.csv")

@@ -5,7 +5,7 @@ library(tidyverse)
 library(zoo)
 library(GGally)
 library(ggplot2)
-library(janitor) #run clean_names()!!
+library(janitor)
 
 ## LOAD DATA
 data <- read.csv("data/raw.csv")

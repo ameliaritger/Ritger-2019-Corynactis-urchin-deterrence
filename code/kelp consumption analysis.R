@@ -210,6 +210,12 @@ print(results)
 # from bart
 #library(betareg)
 #summary(betareg(percent_corrected~treatment, data=data_consumption)) #but I think I can just do a simple mixed model regression looking at area consumed, no??
+# beta.rich <- glmmTMB(ratio.stancor ~ scale(Distance) * scale(pred.den) * scale(comp1) + (1|sub/pnum.f/tnuminpatch.f), data = df[df$ratio.stancor > 0, ], family = “beta_family”)
+# summary(beta.rich)
+# modelassump(beta.rich)
+# bino.rich <-  glmmTMB(bitten ~ scale(Distance) * scale(pred.den) * scale(comp1) + (1|sub/pnum.f/tnuminpatch.f), data = df, family = binomial)
+# summary(bino.rich)
+# modelassump((bino.rich))
 
 ####################################################
 ####################################################

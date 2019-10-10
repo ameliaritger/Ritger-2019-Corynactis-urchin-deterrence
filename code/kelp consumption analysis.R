@@ -94,6 +94,140 @@ corrplot(contrib, is.cor = FALSE) #visualize contribution - dependency is heavy 
 t1 <- table(treat, eat)
 cs <- chisq.test(treat,eat) #yes/no consumption and treatment are independent p = 0.115, red morph positively associated with no consumption control positively associated with kelp consumption, control and red are strongly influencing dependency 
 
+##############################################
+# What is the effect of Corynactis color on whether or not urchins ate kelp, "average" amongst tiles? (Logistic regression, binomial distribution/Bernoulli))
+##############################################
+# Because not every tile was actually used twice (thanks to urchins not moving, etc), get the total counts each tile was used and add it as a column to data frame
+data <- data[order(data$cory_tile_number),] #sort whole data frame by tile number
+df <- data # separate this organization from the whole data frame in case you mess something up
+df <- df[order(df$cory_tile_number),] #sort subsetted data frame by tile number
+df$cory_tile_number[df$cory_tile_number==0] <- c(-1:-15) #change all controls to unique negative numbers to get count values
+new <- count(df, cory_tile_number) #count values for each tile number
+duptimes <- c(new$n) #how many replicates I want of each row
+indx <- rep(1:nrow(new), duptimes) # Create an index of the rows I want with duplications
+dupdf <- new[indx,] # Use that index to generate new data frame
+dupdf$cory_tile_number[1:15] <-0 #change control values back to tile number "0"
+dupdf$n[1:15] <- 15 #change duplications for control tiles to 15
+data$count_per_tile <- dupdf$n #add the counts to the whole data frame
+
+#now put it all together 
+#library(dplyr)
+data_avg <- data %>%
+  group_by(cory_tile_number) %>%                                     # group tile numbers together
+  mutate(success=sum(consumption_binary, na.rm=TRUE)) %>%     #number of successes
+  mutate(failure=ifelse(count_per_tile==2, abs(success-2), ifelse(count_per_tile==1,abs(success-1), 3))) %>%  #number of failures, given number of times tile was used
+  mutate(binary_avg=mean(consumption_binary, na.rm=TRUE)) %>% #average successes/total attempts
+  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # mean kelp consumption of each tile group
+  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>%  # mean % kelp consumption of each tile group
+  ungroup() %>%                                               # ungroup data REALLY IMPT when using group_by
+  distinct(cory_tile_number, .keep_all = TRUE) %>%                   # remove duplicate tiles
+  dplyr::select(treatment, cory_tile_number, urchin_avg_g, success, failure, binary_avg, count_per_tile, kelp_before_cm_2, kelp_after_cm_2, area_corrected) # clean up! extract only columns you want
+
+#check your work
+table(data_avg$treatment,data_avg$failure)
+table(data$cory_tile_number, data$consumption_binary) # nice work!
+
+#now to create the model
+library(lme4)
+#treating the data as bernoulli...but m1 here doesn't address non-independence of each trial
+#data$consumption_yn <- ifelse(data$consumption_binary>0, "Yes", "No")
+#data_bern <- data[c("treatment", "cory_tile_number", "consumption_binary", "consumption_yn")]
+#m1 <- glm(consumption_binary ~ treatment + cory_tile_number, family = binomial, data = data_bern)
+#m2 <- glm(consumption_binary ~ treatment, family = binomial, data = data_bern)
+
+#this is actually realistically treating the data as bernoulli, sucesses given failures amongst treatments and tiles
+m1 <- glm(cbind(success, count_per_tile-success) ~ treatment, family = binomial , data = data_avg)
+summary(m1) 
+#red color morphs are significantly different from control tiles (p = 0.0226), red color morphs are more likely to result in urchin failures
+
+#data$cory_tile_number_f <- as.factor(data$cory_tile_number)
+#m <- glmer(consumption_binary ~ treatment + (1 | cory_tile_number_f), data = data, family = binomial)
+
+####################################################
+# Among the urchins that ate, how does Corynactis matter in how much they ate? (mixed model ANOVA)
+####################################################
+###? should I do something like lm(area consumed) compared to binary analysis above using glm(proportion data)?
+
+# create new data frame for instances where urchins ate something (not nothing)
+data_consumption <- subset(data, data$area_corrected>0)
+
+#visualize correlations among variables
+ggpairs(data_consumption[,c("treatment", "cory_tile_number", "corynactis_binary", "urchin_avg_g", "area_corrected")])
+#urchin size, corynactis presence/absence, nor treatment determined how much kelp was consumed
+
+# Univariate analysis for Y
+hist(data_consumption$area_corrected, main="") #looks fine
+boxplot(data_consumption$area_corrected) #2 outliers
+qqnorm(data_consumption$area_corrected)
+qqline(data_consumption$area_corrected) #could be better, but let's look at the model/residuals
+
+## OPTIONAL...
+#remove outliers
+outliers <- boxplot(data_consumption$area_corrected)$out
+data_consumption <- data_consumption[-which(data_consumption$area_corrected %in% outliers),]
+
+# "fancy" plot kelp consumption with and without Corynactis
+ggplot(data_consumption,aes(x=corynactis_binary,y=area_corrected))+
+  geom_boxplot()+
+  geom_jitter()+
+  xlab("treatment")+
+  ylab("kelp area consumed, when consumed")+
+  theme_bw()
+#ggsave("figures/present_absent.pdf",a,width=5,height=5)
+
+# "fancy" plot kelp consumption by treatment
+ggplot(data_consumption,aes(x=treatment,y=area_corrected))+
+  geom_boxplot()+
+  geom_jitter()+
+  xlab("treatment")+
+  ylab("kelp area consumed, when consumed")+
+  theme_bw()
+
+# super quick linear regression model
+m2 <- lm(area_corrected ~ treatment, data=data_consumption)
+summary(m2)
+
+# add tile as a random effect
+library(lmerTest)
+m3 <- lmer(area_corrected ~ treatment + (1|cory_tile_number), data = data_consumption)
+summary(m3)
+anova(m3)
+
+# let's look at the residuals
+data_consumption$predicted <- predict(m2)
+data_consumption$residuals <- residuals(m2)
+plot(residuals~predicted, data=data_consumption) #for m2, looks fine
+abline(0, 0)
+plot(m3)#for m3, looks fine
+
+library(psycho)
+results <- analyze(m3, CI = 95)
+summary(results) %>% 
+  mutate(p = psycho::format_p(p))
+print(results)
+#as suspected, there was no effect of treatment on amount of kelp consumed by urchins, when any kelp was consumed
+
+# from bart
+#library(betareg)
+#summary(betareg(percent_corrected~treatment, data=data_consumption)) #but I think I can just do a simple mixed model regression looking at area consumed, no??
+
+####################################################
+####################################################
+## SO, in conclusion:
+## Red color morph increases probability urchin will fail to eat any kelp
+## But there was NO EFFECT of treatment on amount of kelp consumed, when urchins did consume kelp
+####################################################
+####################################################
+
+# Ignore the next 120 lines of code
+####################################################
+# Tiered Analysis: Urchins that ate vs didn't eat kelp
+####################################################
+library(corrplot)
+library(boot)
+library(spdep)
+library(DCluster)
+
 # no significance across color morphs, but it looks like red has a big effect - let's take a look
 #subset only controls and red
 data_red <- subset(data, treatment_number==1|treatment_number==2)
@@ -183,129 +317,3 @@ bigres <- do.call(cbind, res[success])
 
 # calculate 2.5th and 97.5th percentiles for 95% CI
 (ci <- t(apply(bigres, 1, quantile, probs = c(0.025, 0.975))))
-
-
-##############################################
-# Logistic regression, binomial distribution (really Bernoulli)
-##############################################
-## Aight. Let's look at the effect of color on whether or not urchins ate, "averaged" amongst tiles
-# because not every tile was actually used twice (thanks to urchins not moving, etc), get the total counts each tile was used and add it as a column to data frame
-data <- data[order(data$cory_tile_number),] #sort whole data frame by tile number
-df <- data # separate this organization from the whole data frame in case you mess something up
-df <- df[order(df$cory_tile_number),] #sort subsetted data frame by tile number
-df$cory_tile_number[df$cory_tile_number==0] <- c(-1:-15) #change all controls to unique negative numbers to get count values
-new <- count(df, cory_tile_number) #count values for each tile number
-duptimes <- c(new$n) #how many replicates I want of each row
-indx <- rep(1:nrow(new), duptimes) # Create an index of the rows I want with duplications
-dupdf <- new[indx,] # Use that index to generate new data frame
-dupdf$cory_tile_number[1:15] <-0 #change control values back to tile number "0"
-dupdf$n[1:15] <- 15 #change duplications for control tiles to 15
-data$count_per_tile <- dupdf$n #add the counts to the whole data frame
-
-#now put it all together 
-#library(dplyr)
-data_avg <- data %>%
-  group_by(cory_tile_number) %>%                                     # group tile numbers together
-  mutate(success=sum(consumption_binary, na.rm=TRUE)) %>%     #number of successes
-  mutate(failure=ifelse(count_per_tile==2, abs(success-2), ifelse(count_per_tile==1,abs(success-1), 3))) %>%  #number of failures, given number of times tile was used
-  mutate(binary_avg=mean(consumption_binary, na.rm=TRUE)) %>% #average successes/total attempts
-  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # mean kelp consumption of each tile group
-  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>%  # mean % kelp consumption of each tile group
-  ungroup() %>%                                               # ungroup data REALLY IMPT when using group_by
-  distinct(cory_tile_number, .keep_all = TRUE) %>%                   # remove duplicate tiles
-  dplyr::select(treatment, cory_tile_number, urchin_avg_g, success, failure, binary_avg, count_per_tile, kelp_before_cm_2, kelp_after_cm_2, area_corrected) # clean up! extract only columns you want
-
-#check your work
-table(data_avg$treatment,data_avg$failure)
-table(data$cory_tile_number, data$consumption_binary) # nice work!
-
-#now to create the model
-library(lme4)
-#treating the data as bernoulli...but m1 here doesn't address non-independence of each trial
-#data$consumption_yn <- ifelse(data$consumption_binary>0, "Yes", "No")
-#data_bern <- data[c("treatment", "cory_tile_number", "consumption_binary", "consumption_yn")]
-#m1 <- glm(consumption_binary ~ treatment + cory_tile_number, family = binomial, data = data_bern)
-#m2 <- glm(consumption_binary ~ treatment, family = binomial, data = data_bern)
-
-#this is actually realistically treating the data as bernoulli, sucesses given failures amongst treatments and tiles
-m1 <- glm(cbind(success, count_per_tile-success) ~ treatment, family = binomial , data = data_avg)
-summary(m1) 
-#red color morphs are significantly different from control tiles (p = 0.0226), red color morphs are more likely to result in urchin failures
-
-#data$cory_tile_number_f <- as.factor(data$cory_tile_number)
-#m <- glmer(consumption_binary ~ treatment + (1 | cory_tile_number_f), data = data, family = binomial)
-
-
-####################################################
-# Tiered Analysis: Among the urchins that ate, how does Corynactis matter in how much they ate?
-####################################################
-###??? should I do something like lm(area consumed) compared to binary analysis above using glm(proportion data)?
-
-# create new data frame for instances where urchins ate something (not nothing)
-data_consumption <- subset(data, data$area_corrected>0)
-
-#visualize correlations among variables
-ggpairs(data_consumption[,c("treatment", "cory_tile_number", "corynactis_binary", "urchin_avg_g", "area_corrected")])
-#urchin size, corynactis presence/absence, nor treatment determined how much kelp was consumed
-
-# Univariate analysis for Y
-hist(data_consumption$area_corrected, main="") #looks fine
-boxplot(data_consumption$area_corrected) #2 outliers
-qqnorm(data_consumption$area_corrected)
-qqline(data_consumption$area_corrected) #could be better, but let's look at the model/residuals
-
-## OPTIONAL...
-#remove outliers
-outliers <- boxplot(data_consumption$area_corrected)$out
-data_consumption <- data_consumption[-which(data_consumption$area_corrected %in% outliers),]
-
-# "fancy" plot kelp consumption with and without Corynactis
-ggplot(data_consumption,aes(x=corynactis_binary,y=area_corrected))+
-  geom_boxplot()+
-  geom_jitter()+
-  xlab("treatment")+
-  ylab("kelp area consumed, when consumed")+
-  theme_bw()
-#ggsave("figures/present_absent.pdf",a,width=5,height=5)
-
-# "fancy" plot kelp consumption by treatment
-ggplot(data_consumption,aes(x=treatment,y=area_corrected))+
-  geom_boxplot()+
-  geom_jitter()+
-  xlab("treatment")+
-  ylab("kelp area consumed, when consumed")+
-  theme_bw()
-
-# super quick linear regression model
-m2 <- lm(area_corrected ~ treatment, data=data_consumption)
-summary(m2)
-
-# add tile as a random effect
-library(lmerTest)
-m3 <- lmer(area_corrected ~ treatment + (1|cory_tile_number), data = data_consumption)
-summary(m3)
-anova(m3)
-
-# let's look at the residuals
-data_consumption$predicted <- predict(m2)
-data_consumption$residuals <- residuals(m2)
-plot(residuals~predicted, data=data_consumption) #for m2, looks fine
-abline(0, 0)
-plot(m3)#for m3, looks fine
-
-library(psycho)
-results <- analyze(m3, CI = 95)
-summary(results) %>% 
-  mutate(p = psycho::format_p(p))
-print(results)
-#as suspected, there was no effect of treatment on amount of kelp consumed by urchins, when any kelp was consumed
-
-# from bart
-#library(betareg)
-#summary(betareg(percent_corrected~treatment, data=data_consumption)) #but I think I can just do a simple mixed model regression looking at area consumed, no??
-
-####################################################
-## SO, in conclusion:
-## Red color morph increases probability urchin will fail to eat any kelp
-## But there was NO EFFECT of treatment on amount of kelp consumed, when urchins did consume kelp
-####################################################

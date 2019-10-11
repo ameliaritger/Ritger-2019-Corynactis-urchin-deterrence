@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE, root.dir='Ritger-2019-Corynactis-urchin-deterrence/')
 ```
 
 ### Load packages and read in data
@@ -27,7 +27,7 @@ colnames(data)[colnames(data)=="ï..Trial.number"] <- "Trial"
 data <- data %>%
   clean_names()
 # remove trials without videos
-data <- subset(data, !tank_number>6 & !trial_number==46)
+data <- subset(data, !tank_number>6 & !trial==46)
 # remove instances where urchin never came in contact with tile during video (regardless of kelp consumption after video ended)
 #data <- subset(data, !data$Urchin_deter=="urchin never tried")
 # remove instances where urchin never came in contact with tile during video (but keep instances where kelp consumption occurred after video ended because otherwise n=3 for control treatment)
@@ -169,7 +169,6 @@ t.test(Y~X) #p=0.039, When Corynactis present, time to cross tile was significan
 
 #Type of Corynactis: effect on time to cross tile
 ```{r}
-library(gamlss)
 X <-  as.factor(cross$treatment)
 plot(Y~X)
 m1 <- lm(Y~X)

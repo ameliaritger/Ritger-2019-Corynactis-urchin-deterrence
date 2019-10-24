@@ -6,9 +6,10 @@ library(zoo)
 library(GGally)
 library(ggplot2)
 library(janitor)
+library(here)
 
 ## LOAD DATA
-data <- read.csv("data/raw.csv")
+data <- read_csv(here::here("data", "raw.csv"))
 
 ## TIDY DATA
 # my own OCD, fix "Trial" issue

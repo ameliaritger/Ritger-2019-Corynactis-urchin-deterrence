@@ -15,8 +15,9 @@ library(tidyverse)
 library(ggplot2)
 library(GGally)
 library(janitor)
+library(here)
 
-data <- read.csv("data/raw.csv")
+data <- read_csv(here::here("data", "raw.csv"))
 ```
 
 ### Tidy data

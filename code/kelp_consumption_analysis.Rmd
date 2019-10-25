@@ -1,0 +1,215 @@
+---
+title: "Kelp consumption analysis for urchin deterrence experiment"
+author: "Amelia Ritger"
+date: "10/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="400px", out.height="300px")
+```
+
+### Load packages, load data, tidy data
+
+##### *magic happening behind the scenes*
+
+```{r, echo=FALSE, message=FALSE}
+#LOAD PACKAGES
+library(tidyverse)
+library(zoo)
+library(GGally)
+library(ggplot2)
+library(janitor)
+library(here)
+
+## LOAD DATA
+data <- read.csv(here::here("data", "raw.csv"))
+
+## TIDY DATA
+# my own OCD, fix "Trial" issue
+colnames(data)[colnames(data)=="ï..Trial.number"] <- "Trial"
+# Clean names for R
+data <- data %>%
+  clean_names()
+# To remove instances where we have video evidence of urchins not moving (and not eating kelp)
+data <- data[(data$urchin_deterred_during_video!="urchin never tried" | data$kelp_visibly_consumed=="yes"),]
+# To compare across treatments, presence/absence of Corynactis
+data$corynactis_binary <- ifelse(data$treatment_number>1, "present", "absent")
+# Create variables: kelp area consumed, percent kelp consumed
+data <- data %>%
+  mutate(area_consumed=(kelp_before_cm_2-kelp_after_cm_2)) %>%
+  mutate(percent_consumed=(area_consumed/kelp_before_cm_2))
+
+# look at "minimum % kelp consumed cutoff" contradictions between ImageJ and visual analysis
+#datan <- subset(data, Visible_consumption=="no")
+#datay <- subset(data, Visible_consumption=="yes")
+#sort(datan$percent_consumed) #If any percent consumption is less than 0.04, we assume there was no consumption (aka 'remove' ImageJ analysis error)...minus the one piece of kelp that definitely had a tiny bit of urchin chewing it
+#data$percent_corrected <- ifelse(data$`Percent of Kelp Consumed`>0.04, data$`Percent of Kelp Consumed`, 0)
+data$percent_corrected <- ifelse(data$kelp_visibly_consumed=="no", 0, data$percent_consumed)
+data$area_corrected <- ifelse(data$kelp_visibly_consumed=="no", 0, data$area_consumed)
+
+# To compare consumption (yes, no) across treatments
+data$consumption_binary <- ifelse(data$percent_corrected>0, 1, 0)
+# Average urchin body weight before and after trials
+data <- data %>%
+  mutate(urchin_avg_g = rowMeans(cbind(urchin_weight_before_g,urchin_weight_after_g)))
+# To see if balcony versus wet lab location had an effect
+data$experiment_location <- ifelse(data$tank_number>6, "Balcony", "Lab")
+# take averages (kelp consumption) of each tile, create new data frame from subsetted averages
+# keep all control values rather than average them (if I pursue averaging repeated tiles), assign each control trial a unique number
+#data$cory_tile_number[data$cory_tile_number==0] <- c(-1:-15)
+```
+
+### Visualize the data
+
+```{r, echo=FALSE}
+ggplot(data, aes(y=area_corrected, x=treatment)) +
+  geom_boxplot() +
+  geom_jitter(size=1.5,alpha=0.9, width=0.1) +
+  labs(x="Treatment", y=expression("Kelp area consumed "(~cm^2))) +
+  theme_bw()
+```
+<< This is a potential plot for WSN poster
+
+It looks like there are a lot more zeroes in the experimental treatments versus the control treatment so...
+
+## Is there any difference between urchins that ate or didn't eat kelp?
+
+#### Rough visualization of distribution using chi-square test
+```{r, echo=FALSE, message=FALSE}
+####################################################
+# Tiered Analysis: Urchins that ate vs didn't eat kelp
+####################################################
+library(corrplot)
+library(boot)
+library(spdep)
+library(DCluster)
+
+# assign variables
+treat <- as.factor(data$treatment)
+eat <- data$consumption_binary
+cory <- data$corynactis_binary
+
+# Chi-square test for kelp consumption versus no consumption for yes/no Corynactis
+t1 <-table(cory, eat)
+chisq.test(cory,eat)
+
+# Chi-square test for kelp consumption versus no consumption across treatments
+t1 <- table(treat, eat)
+chisq.test(treat,eat)
+```
+
+## What is the effect of Corynactis color on whether or not urchins ate kelp (averaged amongst tiles)?
+
+#### Treat the data as Bernoulli (sucesses vs. failures)
+```{r, echo=FALSE, message=FALSE}
+# Because not every tile was actually used twice (thanks to urchins not moving, etc), get the total counts each tile was used and add it as a column to data frame
+data <- data[order(data$cory_tile_number),] #sort whole data frame by tile number
+df <- data # separate this organization from the whole data frame in case you mess something up
+df <- df[order(df$cory_tile_number),] #sort subsetted data frame by tile number
+df$cory_tile_number[df$cory_tile_number==0] <- c(-1:-15) #change all controls to unique negative numbers to get count values
+new <- count(df, cory_tile_number) #count values for each tile number
+duptimes <- c(new$n) #how many replicates I want of each row
+indx <- rep(1:nrow(new), duptimes) # Create an index of the rows I want with duplications
+dupdf <- new[indx,] # Use that index to generate new data frame
+dupdf$cory_tile_number[1:15] <-0 #change control values back to tile number "0"
+dupdf$n[1:15] <- 15 #change duplications for control tiles to 15
+data$count_per_tile <- dupdf$n #add the counts to the whole data frame
+
+#now put it all together 
+#library(dplyr)
+data_avg <- data %>%
+  group_by(cory_tile_number) %>%                                     # group tile numbers together
+  mutate(success=sum(consumption_binary, na.rm=TRUE)) %>%     #number of successes
+  mutate(failure=ifelse(count_per_tile==2, abs(success-2), ifelse(count_per_tile==1,abs(success-1), 3))) %>%  #number of failures, given number of times tile was used
+  mutate(binary_avg=mean(consumption_binary, na.rm=TRUE)) %>% #average successes/total attempts
+  mutate(avg_area=mean(area_consumed, na.rm=TRUE))  %>%       # mean kelp consumption of each tile group
+  mutate(avg_percent=mean(percent_consumed, na.rm=TRUE)) %>%  # mean % kelp consumption of each tile group
+  ungroup() %>%                                               # ungroup data REALLY IMPT when using group_by
+  distinct(cory_tile_number, .keep_all = TRUE) %>%                   # remove duplicate tiles
+  dplyr::select(treatment, cory_tile_number, urchin_avg_g, success, failure, binary_avg, count_per_tile, kelp_before_cm_2, kelp_after_cm_2, area_corrected) # clean up! extract only columns you want
+```
+
+```{r, message=FALSE}
+#create the model
+library(lme4)
+#treating the data as bernoulli, sucesses given failures amongst treatments and tiles
+m1 <- glm(cbind(success, count_per_tile-success) ~ treatment, family = binomial , data = data_avg)
+summary(m1)
+```
+
+## Among the urchins that ate, does Corynactis matter in how much kelp was consumed?
+
+#### Look at univariate distribution of kelp consumption 
+```{r, echo=FALSE}
+# create new data frame for instances where urchins ate something (not nothing)
+data_consumption <- subset(data, data$area_corrected>0)
+
+# Univariate analysis for Y
+hist(data_consumption$area_corrected, main="") #looks fine
+boxplot(data_consumption$area_corrected) #2 outliers
+qqnorm(data_consumption$area_corrected)
+qqline(data_consumption$area_corrected) #could be better, but let's look at the model/residuals
+
+```
+
+#### Maybe remove two outliers?
+
+```{r, echo=FALSE, fig.show="hide"}
+# Isolate outliers in data
+outliers <- boxplot(data_consumption$area_corrected)$out
+data_consumption <- data_consumption[-which(data_consumption$area_corrected %in% outliers),]
+
+```
+
+```{r, echo=FALSE}
+# Univariate analysis for Y (minus outliers)
+hist(data_consumption$area_corrected, main="")
+boxplot(data_consumption$area_corrected)
+qqnorm(data_consumption$area_corrected)
+qqline(data_consumption$area_corrected)
+```
+
+Sure, looks better
+
+#### Now visualize the relationship between treatment and kelp consumption
+```{r, echo=FALSE}
+ggplot(data_consumption,aes(x=corynactis_binary,y=area_corrected))+
+  geom_boxplot()+
+  geom_jitter()+
+  labs(x="Treatment", y=expression("Kelp area consumed, when consumed "(~cm^2))) +
+  theme_bw()
+```
+<< This is a potential plot for WSN poster
+
+```{r, echo=FALSE}
+ggplot(data_consumption,aes(x=treatment,y=area_corrected))+
+  geom_boxplot()+
+  geom_jitter()+
+  labs(x="Treatment", y=expression("Kelp area consumed, when consumed "(~cm^2))) +
+  theme_bw()
+```
+
+There really is no apparent relationship between presence/absence Corynactis or Treatment and the amount of kelp consumed, but let's run stats anyway for good measure 
+
+### Mixed model ANOVA
+#### Treatment is a fixed effect, tile number is a random effect
+```{r, echo=FALSE, message=FALSE, results="show"}
+# add tile as a random effect
+library(lmerTest)
+m2 <- lmer(area_corrected ~ treatment + (1|cory_tile_number), data = data_consumption)
+summary(m2)
+anova(m2)
+
+# let's look at the residuals
+data_consumption$predicted <- predict(m2)
+data_consumption$residuals <- residuals(m2)
+plot(residuals~predicted, data=data_consumption) #looks fine
+abline(0, 0)
+```
+
+Yep, as suspected, there was no effect of treatment on amount of kelp consumed by urchins, when any kelp was consumed
+
+# So, in conclusion:
+- #### Red color morph increases probability urchin will fail to eat any kelp
+- #### But there was no effect of color morph (or even the simple presence of Corynactis) on amount of kelp consumed, when looking only at urchins that did consume kelp

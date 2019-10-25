@@ -6,11 +6,13 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, out.width="400px", out.height="300px")
 ```
 
-### Load packages and read in data
-```{r}
+### Load packages, load data, tidy data
+
+##### *magic happening behind the scenes*
+```{r,echo=FALSE, message=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(GGally)
@@ -18,17 +20,14 @@ library(janitor)
 library(here)
 
 data <- read_csv(here::here("data", "raw.csv"))
-```
 
-### Tidy data
-```{r}
 # my own OCD, fix "Trial" issue
 colnames(data)[colnames(data)=="ï..Trial.number"] <- "Trial"
 # Clean names for R
 data <- data %>%
   clean_names()
 # remove trials without videos
-data <- subset(data, !tank_number>6 & !trial==46)
+data <- subset(data, !tank_number>6 & !trial_number==46)
 # remove instances where urchin never came in contact with tile during video (regardless of kelp consumption after video ended)
 data <- subset(data, !data$urchin_deterred_during_video=="urchin never tried")
 # remove instances where urchin never came in contact with tile during video (but keep instances where kelp consumption occurred after video ended because otherwise n=3 for control treatment)
@@ -64,73 +63,46 @@ data <- data %>%
   dplyr::select(julian_date, kelp_location, urchin_size_mm, urchin_avg_g, treatment, corynactis_binary, consumption_binary, area_corrected, percent_corrected, time_to_cross_cory_first_min, percent_time_alone, percent_time_with_kelp, when_was_kelp_consumed, deter_binary, times_in_contact_with_cory, times_deterred_from_cory, urchin_deterred_during_video, urchin_sucessfully_deterred_during_video, contact_per_hr, deter_per_hr, cross_per_hr, percent_deter, percent_cross)
 ```
 
+### Some prelimiary analysis: plotting some possibly correlated variables
 
-### Visualize data
-```{r, fig.show="hide"}
-#look for correlations among variables
-ggpairs(data[, c("julian_date", "kelp_location", "urchin_size_mm", "urchin_avg_g", "treatment", "corynactis_binary", "consumption_binary", "area_corrected", "percent_corrected", "time_to_cross_cory_first_min", "percent_time_alone", "percent_time_with_kelp", "when_was_kelp_consumed", "urchin_deterred_during_video", "urchin_sucessfully_deterred_during_video", "contact_per_hr", "deter_per_hr", "cross_per_hr", "percent_deter", "percent_cross")])
-
-#look at treatment with everything
-#look at corynactis_binary with everything
-#come back to this when making final conclusions, because lots of the Ys are highly correlated with eachother (obviously) so you want to avoid being  repetitive by commenting on different relationships with correlated variables
-# % time with kelp is - corr with % time with alone (-.98) and both are corr with # deterrence (0.58, -0.57)
-# number of contacts with tile is + corr with number deterrence events (0.81) and number crosses (0.38)
-#interesting things to look at separately - # deterrence, # crosses, time to cross tile
+```{r, echo=FALSE}
+ggplot(data, aes(y=deter_per_hr, x=kelp_location)) +
+  geom_boxplot()
 ```
 
-## How does presence of Corynactis affect "outcome" (see data frame)?
-```{r}
-X <- as.factor(data$corynactis_binary)
-outcome <- factor(as.factor(data$urchin_sucessfully_deterred_during_video))
+No correlation between where kelp was placed in tank and deterrences per hour
 
-t1 <- table(outcome, X) #because data is binary and sample size is small (controls n = 5), use N-1 Two Proportion Test (below)
-prop.test(t1, correct=TRUE) # correct=TRUE tells R to correct for small sample size p = 0.0393
-fisher.test(t1) #fisher's exact test is useful when sample sizes are particularly small... p=0.0505
+```{r, echo=FALSE}
+ggplot(data, aes(y=percent_corrected, x=kelp_location)) +
+  geom_boxplot()
 ```
 
-Outcome: Urchins always crossed tile when it didn't have Corynactis significantly more than expected
+No correlation between where kelp was placed in tank and percent of kelp consumed
 
 
-## How does treatment type affect "outcome" (see data frame)?
-```{r, fig.show="hide"}
-library(corrplot)
-X <- as.factor(data$treatment)
-t1 <-table(X, outcome)
-t1 = t1[-1,] #because "Control" is driving whole relationship
-cs<-chisq.test(t1)
-cs$p.value #p = 0.2054, outcome and treatment are independent
-corrplot(cs$residuals, is.cor = FALSE) #visualize pearsons residuals; (blue color means positively associated with variables, red color means negatively associated with variables); controls driving a lot of this trend, pink and red also important
-fisher.test(t1)
+```{r, echo=FALSE}
+ggplot(data, aes(y=percent_time_alone, x=urchin_avg_g)) +
+  geom_point()
 ```
 
-Outcome: Treatment type doesn't affect outcome
+No real correlation between urchin size and percent of time urchin spent alone during trial
 
-## How does presence of Corynactis affect whether or not urchin was deterred (regardless of ultimate outcome)? 
-```{r}
-X <- as.factor(data$corynactis_binary)
-deter <- as.factor(data$deter_binary)
-
-t1 <- table(X, deter)
-prop.test(t1, correct=TRUE) #two proportion test p = 0.01524
-fisher.test(t1) # fisher's test p = 0.0067
+```{r, echo=FALSE}
+ggplot(data, aes(x=julian_date, y=urchin_avg_g)) +
+  geom_point()
 ```
 
-Outcome: Urchin was never detered from tile when Corynactis was absent, urchins were likely to be deterred when Corynactis present
+As expected, urchins were either big or small later on in experiment as I ran out of urchins
 
-## How does type of Corynactis affect whether or not urchin was deterred (regardless of ultimate outcome)?
-```{r}
-X <- as.factor(data$treatment)
-
-t1 <- table(X, deter)
-t1 = t1[-1,] # because "Control" is driving the whole relationship
-prop.test(t1, correct=TRUE) #p=0.8174
-fisher.test(t1)
+```{r, echo=FALSE}
+ggplot(data, aes(x=treatment, y=urchin_avg_g)) +
+  geom_boxplot()
 ```
 
-Outcome: Treatment type definitely doesn't affect whether or not an urchin was deterred at least 1x
+No real correlation between treatment and urchin size used
 
-## Time with kelp: correlation with amount of kelp consumed? (and is there an urchin size effect?)
-```{r}
+### Is there any correlation with amount of kelp consumed and urchin size?
+```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 time <- data$percent_time_with_kelp
 area <- data$area_corrected
 size <- data$urchin_avg_g
@@ -139,23 +111,41 @@ hist(time)
 hist(area)
 hist(size)
 hist(size_mm)
-
-plot(area~size_mm)
-abline(lm(area~size_mm))
-plot(time~size_mm)
-abline(lm(time~size_mm))
-plot(area~time)
-abline(lm(area~time))
-
-m1<- lm(area~time+size+(time:size))
-summary(m1)
-summary(lm(area~size)) # >> follow up on this, especially fixed effects model
 ```
 
-Outcome: larger urchins weren't eating more kelp, larger urchins weren't spending more time with kelp, if anything they spent less time with kelp, more time spent with kelp = more kelp consumed
 
-## Presence of Corynactis: effect on time to cross tile (urchin size effect?)
-```{r, fig.show="hide"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+plot(area~size_mm)
+abline(lm(area~size_mm))
+```
+
+Urchin size had no correlation with amount of kelp consumed
+
+```{r, echo=FALSE, message=FALSE, fig.show="hide"}
+plot(time~size_mm)
+abline(lm(time~size_mm))
+```
+
+
+```{r, echo=FALSE, message=FALSE}
+plot(area~time)
+abline(lm(area~time))
+```
+
+But the more time spent with kelp >> more kelp consumed (no surprise) 
+
+How might these variables interact with kelp consumption?
+```{r, echo=FALSE, message=FALSE}
+m1<- lm(area~time+size+(time:size))
+summary(m1)
+#summary(lm(area~size)) # >> follow up on this, especially fixed effects model
+```
+It doesn't seem like, statistically, there are any effects or interacting effects on area of kelp consumed
+
+So: larger urchins weren't eating more kelp, larger urchins weren't spending more time with kelp, if anything they spent less time with kelp, and (obviously) more time spent with kelp = more kelp consumed
+
+### Is there an effect of urchin size on time to cross tile?
+```{r, include=FALSE}
 cross <- data %>%
   dplyr::select(treatment, corynactis_binary, time_to_cross_cory_first_min, urchin_avg_g, urchin_size_mm) %>%
   filter(!is.na(time_to_cross_cory_first_min)) %>%
@@ -166,82 +156,165 @@ hist(Y)
 library(car)
 library(data.table)
 qqPlot(Y) #good enough
+```
+Time to cross tile (Y) has been log transformed to meet assumptions of normality
 
-## importantly... is there an effect of urchin size?
+```{r, echo=FALSE}
+##Is there an effect of urchin size?
 plot(Y~cross$urchin_size_mm)
 abline(lm(Y~cross$urchin_size_mm))
 plot(Y~cross$urchin_avg_g)
 abline(lm(Y~cross$urchin_avg_g))
 summary(lm(Y~cross$urchin_avg_g)) #p=0.8554
 ```
-
 Definitely no effect of urchin size on time it takes them to cross the tile
 
-```{r}
-plot(Y~X)
-t.test(Y~X) #p=0.039
+# Now onto the meat of the analysis
+
+## How does presence of Corynactis affect "outcome"?
+
+#### __Outcome options:__
+
+- Cory was beast = Urchin never crossed over Corynactis tile
+
+- Cory was close = Urchin was deterred from Corynactis tile at least once but ultimately crossed over tile
+
+- Uchin was beast = Urchin was never deterred from Corynactis tile
+
+#### Because data is binary and sample size is small (control n = 3), use N-1 Two Proportion Test or Fisher's Exact Test
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+X <- as.factor(data$corynactis_binary)
+outcome <- factor(as.factor(data$urchin_sucessfully_deterred_during_video))
+
+t1 <- table(outcome, X)
+print(t1)
+prop.test(t1, correct=TRUE) # correct=TRUE tells R to correct for small sample size p = 0.0393 for n=5
+fisher.test(t1) #fisher's exact test is useful when sample sizes are particularly small... p=0.0505 for n=5
 ```
+Urchins always crossed tile when it didn't have Corynactis, but it wasn't statistically significant (probably because of low control sample size)
 
-When Corynactis present, time to cross tile was significantly longer
 
-## Type of Corynactis: effect on time to cross tile
-```{r}
-X <-  as.factor(cross$treatment)
-plot(Y~X)
-m1 <- lm(Y~X)
-a1 <- aov(Y~X)
+## How does treatment type affect "outcome"?
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.show="hide"}
+library(corrplot)
+X <- as.factor(data$treatment)
+t1 <-table(X, outcome)
+t1 = t1[-1,] #because "Control" is driving whole relationship
+cs<-chisq.test(t1)
+print(cs)
+corrplot(cs$residuals, is.cor = FALSE) #visualize pearsons residuals; (blue color means positively associated with variables, red color means negatively associated with variables); controls driving a lot of this trend, pink and red also important
+fisher.test(t1)
+```
+Different color morphs definitely did not result in different outcomes
+
+## How does presence of Corynactis affect whether or not urchin was deterred (regardless of ultimate outcome)? 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+X <- as.factor(data$corynactis_binary)
+deter <- as.factor(data$deter_binary)
+
+t1 <- table(X, deter)
+print(t1)
+prop.test(t1, correct=TRUE) #two proportion test p = 0.01524 when n=5 for controls
+fisher.test(t1) # fisher's test p = 0.0067 when n=5 for controls
+```
+Urchin was never detered from tile when Corynactis was absent, urchins were likely to be deterred when Corynactis present, but this is not really statistically significant (it depends which test you use)
+
+## How does type of Corynactis affect whether or not urchin was deterred (regardless of ultimate outcome)?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+X <- as.factor(data$treatment)
+
+t1 <- table(X, deter)
+t1 = t1[-1,] # because "Control" is driving the whole relationship
+prop.test(t1, correct=TRUE) #p=0.8174
+fisher.test(t1)
+```
+Treatment type does not affect whether or not an urchin was deterred at least once
+
+## Is there an effect of Corynactis (yes/no) on time to cross tile?
+```{r, echo=FALSE}
+ggplot(cross, aes(x=corynactis_binary, y=log10(time_to_cross_cory_first_min))) +
+  geom_boxplot() +
+  labs(x="Corynactis presence", y="Time to cross Corynactis tile (log(min))")
+```
+<< This is a potential plot for WSN poster
+
+```{r, echo=FALSE}
+t.test(log10(cross$time_to_cross_cory_first_min)~as.factor(cross$corynactis_binary)) #p=0.039
+```
+When Corynactis were present, the time it took an urchin to cross the tile was significantly longer
+
+## Is there an effect of treatment on time to cross tile?
+```{r, echo=FALSE}
+plot(log10(cross$time_to_cross_cory_first_min)~as.factor(cross$treatment))
+m1 <- lm(log10(cross$time_to_cross_cory_first_min)~as.factor(cross$treatment))
+a1 <- aov(log10(cross$time_to_cross_cory_first_min)~as.factor(cross$treatment))
 summary(a1) #p=0.0034
 TukeyHSD(a1)
 ```
+All experimental treatments are significantly different from control treatment, but there is no signficant difference amongst color morphs
 
-Outcome: All treatment types are significantly different from control, but there is no signficant difference amongst colors
 
-## Presence of Corynactis: effect on % of contacts that resulted in deterrence ("percent_deter")? (urchin size effect?)
-```{r, fig.show="hide"}
+
+
+```{r}
+####################################################################
+####################################################################
+####################################################################
+####################################################################
+#################Check the analysis below###########################
+####################################################################
+####################################################################
+####################################################################
+####################################################################
+
+```
+
+
+
+## Presence of Corynactis: effect on % of contacts that resulted in deterrence?
+```{r, echo=FALSE}
 data$deter_corrected <- ifelse(data$percent_deter=="NaN", 0, data$percent_deter)
 deter <- data %>%
   dplyr::select(treatment, corynactis_binary, deter_corrected, urchin_avg_g, urchin_size_mm)
 ggplot(deter, aes(x=corynactis_binary, y=deter_corrected))+
-  geom_jitter()
-
+  geom_boxplot() +
+  geom_jitter(size=1.5,alpha=0.9, width=0.1) +
+  labs(x="Treatment", y="% contacts that resulted in urchin deterrence") +
+  theme_bw()
 Y <- deter$deter_corrected
 hist(Y)
 qqPlot(Y)
-# >> there are lots of zeros, need to correct for that or account for that in the analysis
 ```
-Interpretation:
-Mu represents the mean of the beta distribution part of the model for the interval (0,1)
-Sigma represents the precision (or shape) of the beta distribution part of the model
-Nu represents the Bernoulli distribution part of the model and probability of observing zeros
+# __There are many zeros, will need to correct for this or account for it in the analysis__
+# __And look at urchin size effect here still ^^__
 
-## Type of Corynactis: effect on % of contacts that resulted in deterrence ("percent_deter")? (urchin size effect?)
-```{r}
+## Type of Corynactis: effect on % of contacts that resulted in deterrence?
+```{r, echo=FALSE}
 ggplot(deter, aes(x=treatment, y=deter_corrected)) +
   geom_boxplot() +
   geom_jitter(width=0.1)
 ```
-
 Maybe there is a difference between orange and pink/red?
+# __And look at urchin size effect here still ^^__
 
-```{r}
+```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 Y <- deter$deter_corrected
 X <- as.factor(deter$treatment)
 hist(Y)
-
 deter <- data %>%
   mutate(success=data$times_deterred_from_cory) %>%
   mutate(failure=data$times_in_contact_with_cory-data$times_deterred_from_cory) %>%
   dplyr::select(treatment,success,failure)
+```
 
-#treat data like Bernoulli distribution, each contact by urchin can result in either success or failure
+### Treat data like Bernoulli: each contact by urchin can result in either success or failure. Also treat data as a beta distribution with zero and one inflation.
+```{r, echo=FALSE, message=FALSE}
 m1 <- glm(cbind(success, failure) ~ treatment, family = binomial , data = deter)
 summary(m1)
-
 #now treat data like zero- and one-inflated beta distribution
 library(gamlss)
 b1 <- gamlss(Y~X,  family = BEINF, trace = F) #BEINF because lots of zero and some one values are present in beta distribution
 summary(b1)
-
 #not really sure what this can be used for
 #means_b1 <- lpred(b1, type='response', what='mu', se.fit=T)
 #df_fit <- data.frame(CORY = data$corynactis_binary, M = means_b1$fit, SE = means_b1$se.fit)
@@ -249,37 +322,23 @@ summary(b1)
 #  labs(x="Corynactis presence/absence",y="% contacts that resulted in deterrence") +
 #  scale_y_continuous(labels=scales::percent)
 ```
+Interpretation:
 
-Nope, there is no significant difference.
+- Mu represents the mean of the beta distribution part of the model for the interval (0,1)
 
-### And finally, plotting some possibly correlated variables
+- Sigma represents the precision (or shape) of the beta distribution part of the model
 
-```{r}
-ggplot(data, aes(y=deter_per_hr, x=kelp_location)) +
-  geom_boxplot()
-```
-No effect
+- Nu represents the Bernoulli distribution part of the model and probability of observing zeros
 
-```{r}
-ggplot(data, aes(y=percent_corrected, x=kelp_location)) +
-  geom_boxplot()
-```
-No effect
+Nope, there is no significant difference between treatments and % of contacts that resulted in deterrence
 
-```{r}
-ggplot(data, aes(y=percent_time_alone, x=urchin_avg_g)) +
-  geom_point()
-```
-Not really an effect
-  
-```{r}
-ggplot(data, aes(x=julian_date, y=urchin_avg_g)) +
-  geom_point()
-```
-As expected, urchins were either big or small later on in experiment as I ran out of urchins
 
-```{r}
-ggplot(data, aes(x=treatment, y=urchin_avg_g)) +
-  geom_boxplot()
-```
-No real correlation between treatment and urchin size used
+# So, in conclusion:
+- #### Larger urchins did not spend more time with kelp or eat more kelp
+- #### Larger urchins did not cross the Corynactis tile more quickly (or slowly) than smaller urchins
+- #### Urchins always crossed tile when it didn’t have Corynactis (but it wasn’t statistically significant)
+- #### 37.5% of the time, urchins were never deterred by tiles with Corynactis
+- #### There was no difference between color morphs affecting the "outcome"
+- #### Corynactis caused urchins to take longer to cross the tile (but there was no effect of color morph)
+
+### AKA: Corynactis had an effect on urchin behavior as we measured it with GoPros, but there wasn't necessarily a difference between color morphs on urchin behavior

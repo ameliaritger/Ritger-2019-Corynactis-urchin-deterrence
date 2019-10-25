@@ -9,7 +9,7 @@ library(janitor)
 library(here)
 
 ## LOAD DATA
-data <- read_csv(here::here("data", "raw.csv"))
+data <- read.csv(here::here("data", "raw.csv"))
 
 ## TIDY DATA
 # my own OCD, fix "Trial" issue
@@ -64,7 +64,6 @@ ggpairs(data[,c("treatment", "cory_tile_number", "corynactis_binary", "urchin_av
 
 ####################################################
 # Tiered Analysis: Urchins that ate vs didn't eat kelp
-# Ignore the next 120 lines of code
 ####################################################
 library(corrplot)
 library(boot)
@@ -93,7 +92,7 @@ corrplot(contrib, is.cor = FALSE) #visualize contribution - dependency is heavy 
 
 # Chi-square test for kelp consumption versus no consumption across treatments
 t1 <- table(treat, eat)
-cs <- chisq.test(treat,eat) #yes/no consumption and treatment are independent p = 0.115, red morph positively associated with no consumption control positively associated with kelp consumption, control and red are strongly influencing dependency 
+chisq.test(treat,eat) #yes/no consumption and treatment are independent p = 0.115, red morph positively associated with no consumption control positively associated with kelp consumption, control and red are strongly influencing dependency 
 
 ##############################################
 # What is the effect of Corynactis color on whether or not urchins ate kelp, "average" amongst tiles? (Logistic regression, binomial distribution/Bernoulli))
@@ -130,13 +129,13 @@ table(data$cory_tile_number, data$consumption_binary) # nice work!
 
 #now to create the model
 library(lme4)
-#treating the data as bernoulli...but m1 here doesn't address non-independence of each trial
+#this treats the data as bernoulli...but m2 here doesn't address non-independence of each trial
 #data$consumption_yn <- ifelse(data$consumption_binary>0, "Yes", "No")
 #data_bern <- data[c("treatment", "cory_tile_number", "consumption_binary", "consumption_yn")]
 #m1 <- glm(consumption_binary ~ treatment + cory_tile_number, family = binomial, data = data_bern)
 #m2 <- glm(consumption_binary ~ treatment, family = binomial, data = data_bern)
 
-#this is actually realistically treating the data as bernoulli, sucesses given failures amongst treatments and tiles
+#treating the data as bernoulli, sucesses given failures amongst treatments and tiles
 m1 <- glm(cbind(success, count_per_tile-success) ~ treatment, family = binomial , data = data_avg)
 summary(m1) 
 #red color morphs are significantly different from control tiles (p = 0.0226), red color morphs are more likely to result in urchin failures

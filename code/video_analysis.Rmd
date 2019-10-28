@@ -298,11 +298,13 @@ ggplot(deter, aes(x=treatment, y=deter_corrected)) +
 Maybe there is a difference between orange and pink/red?
 
 ```{r, echo=FALSE, message=FALSE}
+#remove control
+#deter <- subset(deter, !deter$treatment=="Control") has even less of an effect
 a1 <- aov(deter$deter_corrected~deter$treatment)
 summary(a1) #p=0.11
 TukeyHSD(a1) #non significant but some difference between pink/red and control (but certainly no difference between color morphs)
 ```
-Nope, no difference.
+No, definitely no difference.
 
 ```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 Y <- deter$deter_corrected

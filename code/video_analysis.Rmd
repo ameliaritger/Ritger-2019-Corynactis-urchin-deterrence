@@ -285,8 +285,8 @@ Y <- deter$deter_corrected
 hist(Y)
 qqPlot(Y)
 ```
-# __There are many zeros, will need to correct for this or account for it in the analysis__
-# __And look at urchin size effect here still ^^__
+# There are many zeros, will need to correct for this or account for it in the analysis
+# And look at urchin size effect here still ^^
 
 ## Type of Corynactis: effect on % of contacts that resulted in deterrence?
 ```{r, echo=FALSE}
@@ -295,7 +295,7 @@ ggplot(deter, aes(x=treatment, y=deter_corrected)) +
   geom_jitter(width=0.1)
 ```
 Maybe there is a difference between orange and pink/red?
-# __And look at urchin size effect here still ^^__
+# And look at urchin size effect here still ^^
 
 ```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 Y <- deter$deter_corrected

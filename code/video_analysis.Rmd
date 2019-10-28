@@ -285,8 +285,8 @@ Y <- deter$deter_corrected
 hist(Y)
 qqPlot(Y)
 ```
-# There are many zeros, will need to correct for this or account for it in the analysis
-# And look at urchin size effect here still ^^
+### There are many zeros that have not been corrected for in the analysis
+#### AND this is not really a different question from the "presence affecting outcome" question
 
 ## Type of Corynactis: effect on % of contacts that resulted in deterrence?
 ```{r, echo=FALSE}
@@ -294,8 +294,15 @@ ggplot(deter, aes(x=treatment, y=deter_corrected)) +
   geom_boxplot() +
   geom_jitter(width=0.1)
 ```
+
 Maybe there is a difference between orange and pink/red?
-# And look at urchin size effect here still ^^
+
+```{r, echo=FALSE, message=FALSE}
+a1 <- aov(deter$deter_corrected~deter$treatment)
+summary(a1) #p=0.11
+TukeyHSD(a1) #non significant but some difference between pink/red and control (but certainly no difference between color morphs)
+```
+Nope, no difference.
 
 ```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 Y <- deter$deter_corrected
@@ -322,23 +329,23 @@ summary(b1)
 #  labs(x="Corynactis presence/absence",y="% contacts that resulted in deterrence") +
 #  scale_y_continuous(labels=scales::percent)
 ```
-Interpretation:
+###### Interpretation:
 
-- Mu represents the mean of the beta distribution part of the model for the interval (0,1)
+###### - Mu represents the mean of the beta distribution part of the model for the interval (0,1)
 
-- Sigma represents the precision (or shape) of the beta distribution part of the model
+###### - Sigma represents the precision (or shape) of the beta distribution part of the model
 
-- Nu represents the Bernoulli distribution part of the model and probability of observing zeros
+###### - Nu represents the Bernoulli distribution part of the model and probability of observing zeros
 
 Nope, there is no significant difference between treatments and % of contacts that resulted in deterrence
 
 
 # So, in conclusion:
+- #### 100% of the time, urchins were never deterred by tiles without Corynactis (but it wasn’t statistically significant)
+- #### 37.5% of the time, urchins were never deterred by tiles with Corynactis
+- #### There was no significant difference between color morphs affecting the "outcome"
+- #### Corynactis caused urchins to take longer to cross the tile (but there was no effect of color morph)
 - #### Larger urchins did not spend more time with kelp or eat more kelp
 - #### Larger urchins did not cross the Corynactis tile more quickly (or slowly) than smaller urchins
-- #### Urchins always crossed tile when it didn’t have Corynactis (but it wasn’t statistically significant)
-- #### 37.5% of the time, urchins were never deterred by tiles with Corynactis
-- #### There was no difference between color morphs affecting the "outcome"
-- #### Corynactis caused urchins to take longer to cross the tile (but there was no effect of color morph)
 
 ### AKA: Corynactis had an effect on urchin behavior as we measured it with GoPros, but there wasn't necessarily a difference between color morphs on urchin behavior

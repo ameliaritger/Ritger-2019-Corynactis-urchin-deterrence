@@ -232,9 +232,12 @@ Treatment type does not affect whether or not an urchin was deterred at least on
 
 ## Is there an effect of Corynactis (yes/no) on time to cross tile?
 ```{r, echo=FALSE}
-ggplot(cross, aes(x=corynactis_binary, y=log10(time_to_cross_cory_first_min))) +
+ggplot(cross, aes(x=corynactis_binary, y=time_to_cross_cory_first_min)) +
   geom_boxplot() +
-  labs(x="Corynactis presence", y="Time to cross Corynactis tile (log(min))")
+  labs(x="Corynactis presence", y="Time elapsed for urchin to cross tile (min)") +
+  theme_bw()
+
+ggsave(here::here("figures", "presence by time to cross tile.png"), width=4, height=3)
 ```
 << This is a potential plot for WSN poster
 
@@ -252,24 +255,6 @@ summary(a1) #p=0.0034
 TukeyHSD(a1)
 ```
 All experimental treatments are significantly different from control treatment, but there is no signficant difference amongst color morphs
-
-
-
-
-```{r}
-####################################################################
-####################################################################
-####################################################################
-####################################################################
-#################Check the analysis below###########################
-####################################################################
-####################################################################
-####################################################################
-####################################################################
-
-```
-
-
 
 ## Presence of Corynactis: effect on % of contacts that resulted in deterrence?
 ```{r, echo=FALSE}

@@ -63,13 +63,12 @@ data$experiment_location <- ifelse(data$tank_number>6, "Balcony", "Lab")
 ### Visualize the data
 
 ```{r, echo=FALSE}
-a <- ggplot(data, aes(y=area_corrected, x=treatment)) +
+ggplot(data, aes(y=area_corrected, x=treatment)) +
   geom_boxplot() +
   geom_jitter(size=1.5,alpha=0.9, width=0.1) +
   labs(x="Treatment", y=expression("Kelp area consumed "(~cm^2))) +
   theme_bw()
 
-print(a)
 ggsave(here::here("figures", "treatment by area consumed.png"), width=4, height=3)
 ```
 << This is a potential plot for WSN poster

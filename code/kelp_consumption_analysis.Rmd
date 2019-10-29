@@ -138,6 +138,8 @@ library(lme4)
 #treating the data as bernoulli, sucesses given failures amongst treatments and tiles
 m1 <- glm(cbind(success, count_per_tile-success) ~ treatment, family = binomial , data = data_avg)
 summary(m1)
+aov(m1)
+
 ```
 
 ## Among the urchins that ate, does Corynactis matter in how much kelp was consumed?
@@ -215,3 +217,33 @@ Yep, as suspected, there was no effect of treatment on amount of kelp consumed b
 # So, in conclusion:
 - #### Red color morph increases probability urchin will fail to eat any kelp
 - #### But there was no effect of color morph (or even the simple presence of Corynactis) on amount of kelp consumed, when looking only at urchins that did consume kelp
+
+
+### In the context of WSN, here are a few plots that might be useful for presentations
+```{r}
+a <- data %>%
+  group_by(treatment) %>%
+  tally() %>%
+  ungroup() #(15,19,18,18)
+
+b <- data %>%
+  group_by(treatment) %>%   
+  summarise(consumption_binary = sum(consumption_binary)) %>%
+  ungroup() #(12,12,11,7)
+
+prop <- merge(a,b)
+
+prop <- prop %>%
+  mutate(no_eat = n-consumption_binary) %>%
+  mutate(no_eat_pcnt = no_eat/n)
+
+ggplot(data=prop, aes(x=treatment, y=no_eat_pcnt)) +
+  geom_col(aes(fill=treatment), show.legend=FALSE) +
+  scale_fill_manual(values=c("cadetblue4", "orange", "pink", "red")) + #manually change point colors
+  labs(x="Treatment", y="% urchins that did not consume kelp") +
+  theme_classic()
+
+ggsave(here::here("figures", "treatment by percent failures.png"), width=4, height=3)
+```
+
+Need to run post hoc tests to add "A,B" on top of the columns

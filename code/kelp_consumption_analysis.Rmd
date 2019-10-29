@@ -98,7 +98,34 @@ chisq.test(cory,eat)
 
 # Chi-square test for kelp consumption versus no consumption across treatments
 t1 <- table(treat, eat)
-chisq.test(treat,eat)
+chisq.test(t1)
+
+## from fifer package (which no longer exists)
+chisq.post.hoc <- function(tbl,test=c("fisher.test"), popsInRows=TRUE,control=c("fdr","BH","BY","bonferroni","holm","hochberg","hommel"),digits=4, ...) {
+	#### extract correction method
+  control <- match.arg(control)
+	#### extract which test (fisher or chi square) 
+  test = match.fun(test)
+	#### test rows or columns
+  if (!popsInRows) tbl <- t(tbl)
+  popsNames <- rownames(tbl)
+  	#### come up with all possible comparisons
+  prs <- combn(1:nrow(tbl),2)
+	#### preallocate  
+  tests <- ncol(prs)
+  pvals <- numeric(tests)
+  lbls <- character(tests)
+  for (i in 1:tests) {
+    pvals[i] <- test(tbl[prs[,i],], ...)$p.value
+    lbls[i] <- paste(popsNames[prs[,i]],collapse=" vs. ")
+  }
+  adj.pvals <- p.adjust(pvals,method=control)
+  cat("Adjusted p-values used the",control,"method.\n\n")
+  data.frame(comparison=lbls,raw.p=round(pvals,digits),adj.p=round(adj.pvals,digits))
+}
+
+chisq.post.hoc(t1, control = "bonferroni", popsInRows  = TRUE) #Control and Red are different
+
 ```
 
 ## What is the effect of Corynactis color on whether or not urchins ate kelp (averaged amongst tiles)?
@@ -234,16 +261,49 @@ b <- data %>%
 prop <- merge(a,b)
 
 prop <- prop %>%
-  mutate(no_eat = n-consumption_binary) %>%
-  mutate(no_eat_pcnt = no_eat/n)
+  mutate(no_eat = n-consumption_binary,
+         no_eat_pcnt = no_eat/n,
+         eat_pcnt = consumption_binary/n)
 
-ggplot(data=prop, aes(x=treatment, y=no_eat_pcnt)) +
+ggplot(data=prop, aes(x=treatment, y=eat_pcnt)) +
   geom_col(aes(fill=treatment), show.legend=FALSE) +
   scale_fill_manual(values=c("cadetblue4", "orange", "pink", "red")) + #manually change point colors
-  labs(x="Treatment", y="% urchins that did not consume kelp") +
-  theme_classic()
+  labs(x="Treatment", y="Proportion of urchins that consumed kelp") +
+  geom_text(aes(label=c("A", "AB", "AB", "B")), vjust=-1, size=4.5) +
+  scale_y_continuous(limits=c(0,1),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
+  theme(panel.grid.major.y  = element_line(color = "grey90"),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "white", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.text = element_text(color = "black", size=12),
+      axis.title.y = element_text(vjust=4, size=14),
+      axis.title.x = element_text(size=14),
+      plot.margin=unit(c(0.5,0,0.2,0.5), "cm"))
 
-ggsave(here::here("figures", "treatment by percent failures.png"), width=4, height=3)
+ggsave(here::here("figures", "treatment by percent failures.png"), width=6, height=4.5)
 ```
 
-Need to run post hoc tests to add "A,B" on top of the columns
+Let's see how it looks flipped
+```{r}
+ggplot(data=prop, aes(x=fct_reorder(treatment, -eat_pcnt), y=eat_pcnt)) +
+  geom_col(aes(fill=treatment), show.legend=FALSE) +
+  scale_fill_manual(values=c("cadetblue4", "orange", "pink", "red")) + #manually change point colors
+  labs(x="Treatment", y="Proportion of urchins that consumed kelp") +
+  geom_text(aes(label=c("B", "AB", "AB", "A")), hjust=-1, size=4.5) +
+  geom_text(label=c("(n=15)", "(n=19)", "(n=18)", "(n=18)"), color=c("white","black","black","black"), y=0.05, size=3.5) +
+  scale_y_continuous(limits=c(0,1),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
+  coord_flip() +
+  theme(panel.grid.major.x  = element_line(color = "grey90"),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "white", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.text = element_text(color = "black", size=12),
+      axis.title.y = element_text(vjust=4, size=14),
+      axis.title.x = element_text(size=14),
+      plot.margin=unit(c(0,0.5,0.2,0.5), "cm"))
+
+ggsave(here::here("figures", "treatment by percent failures_h.png"), width=6, height=4.5)
+```
+

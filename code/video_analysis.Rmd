@@ -344,13 +344,14 @@ ci <- deterred$ci
 
 ```{r}
 ggplot(deterred, aes(x=treatment, y=deter_corrected, color=treatment)) +
-  geom_point(aes(color=treatment), shape=124, size=15, show.legend=FALSE) +
-  geom_segment(aes(y=deter_corrected-ci, x=treatment, yend=deter_corrected+ci, xend=treatment), show.legend=FALSE) +
-  geom_segment(x=2, xend=2, y=0.2763889+0.2954399, yend=0.2763889-0.2954399, color="orange")+
+  geom_jitter(data=deter, aes(fill=treatment), pch=21, color="black", size=6, alpha=0.7, width=0.15, show.legend=FALSE) +
+  scale_fill_manual(values=c("cadetblue4", "orange", "pink", "red")) +
+  geom_point(aes(color=treatment), shape=124, size=20, show.legend=FALSE) +
+  geom_segment(aes(y=deter_corrected-ci, x=treatment, yend=deter_corrected+ci, xend=treatment), show.legend=FALSE, size=2) +
+  geom_segment(x=2, xend=2, y=0.2763889+0.2954399, yend=0.2763889-0.2954399, color="orange", size=2)+
   scale_color_manual(values=c("cadetblue4", "orange", "pink", "red")) +
   #geom_segment(aes(y=deter_corrected-ci, x=treatment, yend=deter_corrected+ci, xend=treatment), show.legend=FALSE) +
-  geom_jitter(data=deter, size=2, alpha=0.7, width=0.1, show.legend=FALSE) +
-  labs(x="Treatment", y="Proportion of contacts with tile resulting in urchin deterrence") +
+  labs(x=expression(~italic(Corynactis)~' color morph'), y="Proportion of contacts with tile resulting in deterrence") +
   scale_y_continuous(limits=c(-0.01,1.05),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
   coord_flip() +
   theme(panel.grid.major.x  = element_line(color = "grey90"),
@@ -358,10 +359,10 @@ ggplot(deterred, aes(x=treatment, y=deter_corrected, color=treatment)) +
       panel.border = element_rect(color = "white", fill = NA),
       axis.line = element_line(color = "black"),
       axis.ticks = element_line(color = "black"),
-      axis.text = element_text(color = "black", size=16),
-      axis.title.y = element_text(size=20, vjust=4),
-      axis.title.x = element_text(size=20, vjust=-1.5),
-      plot.margin=unit(c(0.2,0.5,0.5,0.5), "cm"))
+      axis.text = element_text(color = "black", size=24),
+      axis.title.y = element_text(size=26, vjust=4),
+      axis.title.x = element_text(size=24, vjust=-1.5),
+      plot.margin=unit(c(0.5,2.4,0.5,0.5), "cm"))
 
 ggsave(here::here("figures", "treatment by percent deterrence.png"), width=9, height=6.75)
 ```

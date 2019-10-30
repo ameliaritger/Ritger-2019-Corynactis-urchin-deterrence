@@ -149,7 +149,7 @@ So: larger urchins weren't eating more kelp, larger urchins weren't spending mor
 cross <- data %>%
   dplyr::select(treatment, corynactis_binary, time_to_cross_cory_first_min, urchin_avg_g, urchin_size_mm) %>%
   filter(!is.na(time_to_cross_cory_first_min)) %>%
-  filter(time_to_cross_cory_first_min<100) #remove this one point, it's a huge outlier
+  filter(time_to_cross_cory_first_min<50) #remove this one point, it's a huge outlier
 Y <- log10(cross$time_to_cross_cory_first_min) #to meet assumptions of normality
 X <- as.factor(cross$corynactis_binary)
 hist(Y)
@@ -233,11 +233,22 @@ Treatment type does not affect whether or not an urchin was deterred at least on
 ## Is there an effect of Corynactis (yes/no) on time to cross tile?
 ```{r, echo=FALSE}
 ggplot(cross, aes(x=corynactis_binary, y=time_to_cross_cory_first_min)) +
-  geom_boxplot() +
-  labs(x="Corynactis presence", y="Time elapsed for urchin to cross tile (min)") +
-  theme_bw()
+  geom_boxplot(aes(fill=corynactis_binary), outlier.shape=NA, show.legend=FALSE) +
+  geom_jitter(alpha=0.4, width=0.1, shape=1, stroke = 1.5) +
+  scale_fill_manual(values=c("cadetblue4", "coral")) +
+  labs(x="", y="Time for urchin to cross tile (min)") +
+  scale_x_discrete(labels = c('Corynactis absent','Corynactis present')) +
+  scale_y_continuous(limits=c(0,50),expand = c(0,0), breaks=c(0,10,20,30,40,50)) +
+  theme(panel.grid.major.y  = element_line(color = "grey90"),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "white", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.text = element_text(color = "black", size=12),
+      axis.title.y = element_text(size=14, vjust=4),
+      plot.margin=unit(c(0.5,0.2,-0.3,0.5), "cm"))
 
-ggsave(here::here("figures", "presence by time to cross tile.png"), width=4, height=3)
+ggsave(here::here("figures", "presence by time to cross tile.png"), width=6, height=4.5)
 ```
 << This is a potential plot for WSN poster
 
@@ -259,13 +270,21 @@ All experimental treatments are significantly different from control treatment, 
 ## Presence of Corynactis: effect on % of contacts that resulted in deterrence?
 ```{r, echo=FALSE}
 data$deter_corrected <- ifelse(data$percent_deter=="NaN", 0, data$percent_deter)
+data$deter_trans <- asin(sqrt(data$deter_corrected))
+data$deter_log <- log(data$deter_corrected/(1-data$deter_corrected))
+hist(data$deter_log) #hot damn that's normal but also tons of -Inf
+qqPlot(data$deter_trans)
+qqPlot(data$deter_corrected) #no difference between arcsin sqrt transformed and non transformed
+
 deter <- data %>%
-  dplyr::select(treatment, corynactis_binary, deter_corrected, urchin_avg_g, urchin_size_mm)
+  dplyr::select(treatment, corynactis_binary, deter_corrected)
+
 ggplot(deter, aes(x=corynactis_binary, y=deter_corrected))+
   geom_boxplot() +
   geom_jitter(size=1.5,alpha=0.9, width=0.1) +
   labs(x="Treatment", y="% contacts that resulted in urchin deterrence") +
   theme_bw()
+
 Y <- deter$deter_corrected
 hist(Y)
 qqPlot(Y)
@@ -290,6 +309,59 @@ summary(a1) #p=0.11
 TukeyHSD(a1) #non significant but some difference between pink/red and control (but certainly no difference between color morphs)
 ```
 No, definitely no difference.
+
+Plot means + confidence intervals of the groups
+```{r}
+library(Rmisc)
+deterred <- summarySE(deter, measurevar="deter_corrected", groupvars="treatment")
+mean <- deterred$deter_corrected
+ci <- deterred$ci
+
+# ggplot(deter, aes(x=treatment, y=deter_corrected, color=treatment)) +
+#   geom_jitter(size=4, alpha=0.5, width=0.1, show.legend=FALSE) +
+#   scale_color_manual(values=c("cadetblue4", "orange", "pink", "red")) +
+#   geom_segment(data=deterred, aes(x=c(0.5,1.5,2.5,3.5), xend=c(1.5,2.5,3.5,4.5), y=mean, yend=mean), size=3, show.legend=FALSE) +
+#   geom_segment(data=deterred, aes(x=c(1,2,3,4), xend=c(1,2,3,4), y=mean+ci, yend=mean-ci), size=1.5, show.legend=FALSE, alpha=0.5) +
+#   geom_segment(x=2, xend=2, y=0.2763889+0.2954399, yend=0.2763889-0.2954399, size=2, color="orange", alpha=0.2)+
+#   labs(x="Treatment", y="Proportion of contacts resulting in deterrence") +
+#   #scale_x_discrete(labels = c('Corynactis absent','Corynactis present')) +
+#   scale_y_continuous(limits=c(0,1.05),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
+#   coord_flip() +
+#   theme(panel.grid.major.x  = element_line(color = "grey90"),
+#       panel.background = element_rect(fill = "white"),
+#       panel.border = element_rect(color = "white", fill = NA),
+#       axis.line = element_line(color = "black"),
+#       axis.ticks = element_line(color = "black"),
+#       axis.text = element_text(color = "black", size=12),
+#       axis.title.y = element_text(vjust=4, size=14),
+#       axis.title.x = element_text(size=14, vjust=-1.5),
+#       plot.margin=unit(c(0.2,0.2,0.5,0.5), "cm"))
+```
+
+```{r}
+ggplot(deterred, aes(x=treatment, y=deter_corrected, color=treatment)) +
+  geom_point(aes(color=treatment), shape=124, size=15, show.legend=FALSE) +
+  geom_segment(aes(y=deter_corrected-ci, x=treatment, yend=deter_corrected+ci, xend=treatment), show.legend=FALSE) +
+  geom_segment(x=2, xend=2, y=0.2763889+0.2954399, yend=0.2763889-0.2954399, color="orange")+
+  scale_color_manual(values=c("cadetblue4", "orange", "pink", "red")) +
+  #geom_segment(aes(y=deter_corrected-ci, x=treatment, yend=deter_corrected+ci, xend=treatment), show.legend=FALSE) +
+  geom_jitter(data=deter, size=2, alpha=0.7, width=0.1, show.legend=FALSE) +
+  labs(x="Treatment", y="Proportion of contacts with tile resulting in urchin deterrence") +
+  scale_y_continuous(limits=c(-0.01,1.05),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
+  coord_flip() +
+  theme(panel.grid.major.x  = element_line(color = "grey90"),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "white", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.text = element_text(color = "black", size=12),
+      axis.title.y = element_text(vjust=4, size=14),
+      axis.title.x = element_text(size=14, vjust=-1.5),
+      plot.margin=unit(c(0.2,0.2,0.5,0.5), "cm"))
+
+ggsave(here::here("figures", "treatment by percent deterrence.png"), width=6, height=4.5)
+```
+
 
 ```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 Y <- deter$deter_corrected

@@ -242,7 +242,7 @@ ggplot(cross, aes(x=corynactis_binary, y=time_to_cross_cory_first_min)) +
   scale_fill_manual(values=c("cadetblue4", "coral")) +
   labs(x="", y="Time for urchin to cross tile (min)") +
   scale_x_discrete(labels = c('Corynactis absent','Corynactis present')) +
-  scale_y_continuous(limits=c(0,50),expand = c(0,0), breaks=c(0,10,20,30,40,50)) +
+  scale_y_continuous(limits=c(0,40),expand = c(0,0), breaks=c(0,10,20,30,40)) +
   theme(panel.grid.major.y  = element_line(color = "grey90"),
       panel.background = element_rect(fill = "white"),
       panel.border = element_rect(color = "white", fill = NA),
@@ -358,14 +358,13 @@ ggplot(deterred, aes(x=treatment, y=deter_corrected, color=treatment)) +
       panel.border = element_rect(color = "white", fill = NA),
       axis.line = element_line(color = "black"),
       axis.ticks = element_line(color = "black"),
-      axis.text = element_text(color = "black", size=12),
-      axis.title.y = element_text(vjust=4, size=14),
-      axis.title.x = element_text(size=14, vjust=-1.5),
-      plot.margin=unit(c(0.2,0.2,0.5,0.5), "cm"))
+      axis.text = element_text(color = "black", size=16),
+      axis.title.y = element_text(size=20, vjust=4),
+      axis.title.x = element_text(size=20, vjust=-1.5),
+      plot.margin=unit(c(0.2,0.5,0.5,0.5), "cm"))
 
-ggsave(here::here("figures", "treatment by percent deterrence.png"), width=6, height=4.5)
+ggsave(here::here("figures", "treatment by percent deterrence.png"), width=9, height=6.75)
 ```
-
 
 ```{r, echo=FALSE, message=FALSE, fig.show="hide"}
 Y <- deter$deter_corrected

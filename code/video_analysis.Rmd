@@ -61,6 +61,10 @@ data <- data %>%
 # Clean up data frame, only keep variables you want to work with
 data <- data %>%
   dplyr::select(julian_date, kelp_location, urchin_size_mm, urchin_avg_g, treatment, corynactis_binary, consumption_binary, area_corrected, percent_corrected, time_to_cross_cory_first_min, percent_time_alone, percent_time_with_kelp, when_was_kelp_consumed, deter_binary, times_in_contact_with_cory, times_deterred_from_cory, urchin_deterred_during_video, urchin_sucessfully_deterred_during_video, contact_per_hr, deter_per_hr, cross_per_hr, percent_deter, percent_cross)
+
+ggplot(data, aes(x=treatment, y=cross_per_hr)) +
+  geom_boxplot() +
+  geom_jitter()
 ```
 
 ### Some prelimiary analysis: plotting some possibly correlated variables

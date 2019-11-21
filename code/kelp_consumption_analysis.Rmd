@@ -265,6 +265,7 @@ prop <- prop %>%
          no_eat_pcnt = no_eat/n,
          eat_pcnt = consumption_binary/n)
 
+# vertical plot with color coding 
 ggplot(data=prop, aes(x=treatment, y=eat_pcnt)) +
   geom_col(aes(fill=treatment), show.legend=FALSE) +
   scale_fill_manual(values=c("cadetblue4", "orange", "pink", "red")) + #manually change point colors
@@ -281,7 +282,31 @@ ggplot(data=prop, aes(x=treatment, y=eat_pcnt)) +
       axis.title.x = element_text(size=14),
       plot.margin=unit(c(0.5,0,0.2,0.5), "cm"))
 
-ggsave(here::here("figures", "treatment by percent failures.png"), width=6, height=4.5)
+# vertical plot with image coding (?!)
+library(ggtextures)
+
+ggplot(data=prop, aes(x=treatment, y=eat_pcnt, image=c(
+    "https://live.staticflickr.com/7344/16596942925_ecbb1fed55_h.jpg",
+    "https://github.com/stier-lab/Ritger-2019-Corynactis-urchin-deterrence/blob/master/media/orange.jpg?raw=true",
+    "https://github.com/stier-lab/Ritger-2019-Corynactis-urchin-deterrence/blob/master/media/pink.jpg?raw=true",
+    "https://github.com/stier-lab/Ritger-2019-Corynactis-urchin-deterrence/blob/master/media/red.jpg?raw=true"))) +
+  geom_col(aes(fill=treatment), show.legend=FALSE) +
+  ggtextures::geom_textured_col(img_width=unit(3,"in")) +
+  labs(x="Treatment", y="Proportion of urchins that consumed kelp") +
+  geom_text(aes(label=c("A", "AB", "AB", "B")), vjust=-1, size=4.5) +
+  scale_y_continuous(limits=c(0,1),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
+  theme(panel.grid.major.y  = element_line(color = "grey90"),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "white", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.text = element_text(color = "black", size=12),
+      axis.title.y = element_text(vjust=4, size=14),
+      axis.title.x = element_text(size=14),
+      plot.margin=unit(c(0.5,0,0.2,0.5), "cm"))
+
+ggsave(here::here("figures", "MAGIC.png"), width=6, height=4.5)
+
 ```
 
 Let's see how it looks flipped

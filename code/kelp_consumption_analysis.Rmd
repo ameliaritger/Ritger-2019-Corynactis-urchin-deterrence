@@ -21,6 +21,7 @@ library(GGally)
 library(ggplot2)
 library(janitor)
 library(here)
+library(lme4)
 
 ## LOAD DATA
 data <- read.csv(here::here("data", "raw.csv"))
@@ -305,7 +306,7 @@ ggplot(data=prop, aes(x=treatment, y=eat_pcnt, image=c(
       axis.title.x = element_text(size=14),
       plot.margin=unit(c(0.5,0,0.2,0.5), "cm"))
 
-ggsave(here::here("figures", "MAGIC.png"), width=6, height=4.5)
+#ggsave(here::here("figures", "MAGIC.png"), width=6, height=4.5)
 
 ```
 
@@ -313,10 +314,10 @@ Let's see how it looks flipped
 ```{r}
 ggplot(data=prop, aes(x=fct_reorder(treatment, -eat_pcnt), y=eat_pcnt)) +
   geom_col(aes(fill=treatment), show.legend=FALSE) +
-  scale_fill_manual(values=c("cadetblue4", "orange", "pink", "red")) + #manually change point colors
+  scale_fill_manual(values=c("#0072B2", "#FF9933", "pink", "#FF3333")) + #manually change point colors
   labs(x=expression(~italic(Corynactis)~' color morph'), y="Proportion of urchins that consumed kelp") +
-  geom_text(aes(label=c("B", "AB", "AB", "A")), hjust=-1, size=5) +
-  geom_text(label=c("(n=15)", "(n=19)", "(n=18)", "(n=18)"), color=c("white","black","black","black"), y=0.07, size=3.5) +
+  #geom_text(aes(label=c("B", "AB", "AB", "A")), hjust=-1, size=6, fontface="bold") +
+  geom_text(label=c("(N=15)", "(N=19)", "(N=18)", "(N=18)"), color=c("white","black","black","black"), y=0.09, size=6, fontface="italic") +
   scale_y_continuous(limits=c(0,1),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1)) +
   coord_flip() +
   theme(panel.grid.major.x  = element_line(color = "grey90"),
@@ -329,6 +330,57 @@ ggplot(data=prop, aes(x=fct_reorder(treatment, -eat_pcnt), y=eat_pcnt)) +
       axis.title.x = element_text(size=18),
       plot.margin=unit(c(0,0.5,0.2,0.5), "cm"))
 
-ggsave(here::here("figures", "treatment by percent failures_h.png"), width=6, height=4.5)
+ggsave(here::here("figures", "dissertation", "treatment by percent #failures_h.png"), width=6, height=4)
+```
+
+
+## In 2025 - let's re-do this analysis...
+```{r}
+data_chi <- data %>%
+  mutate(outcome = ifelse(consumption_binary == 1, "success", "failure")) %>%
+  group_by(treatment, outcome) %>%
+  summarize(n = n(), .groups = "drop") %>%
+  pivot_wider(names_from = outcome, values_from = n) %>%
+  mutate(total = success+failure)
+
+chi_matrix <- data_chi %>%
+  select(success, failure) %>%
+  as.matrix()
+
+chisq.test(chi_matrix)
+fisher.test(chi_matrix)
+
+data_consumption <- data_consumption %>%
+    mutate(percent_corrected_logit = log(percent_corrected / (1 - percent_corrected)))
+
+lmm <- lmer(percent_corrected_logit ~ treatment + (1|tank_number), data = data_consumption)
+summary(lmm)
+
+ggplot(data_consumption, aes(x = fitted(lmm), y = residuals(lmm))) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+
+ggplot(data=data_consumption, aes(x=treatment, y=percent_corrected)) +
+  geom_boxplot(aes(fill=treatment), show.legend=FALSE, outliers=FALSE) +
+  geom_jitter(width=0.1) +
+  scale_fill_manual(values=c("#0072B2", "#FF9933", "pink", "#FF3333")) + #manually change point colors
+  labs(x="text", y="Proportion of kelp consumed") +
+  scale_y_continuous(limits=c(0,1),expand = c(0,0), breaks=c(0,0.2,0.4,0.6,0.8,1),
+                       labels = c("0", "0.2", "0.4", "0.6", "0.8", "1.0")) +
+  coord_flip() +
+  theme(panel.grid.major.x  = element_line(color = "grey90"),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(color = "white", fill = NA),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      axis.text = element_text(color = "black", size=16),
+      axis.text.y = element_text(color = "black", size=16),
+      axis.title.y = element_text(vjust=4, size=18),
+      axis.title.x = element_text(size=18),
+      plot.margin=unit(c(0,0.5,0.2,0.5), "cm"))
+
+#ggsave(here::here("figures", "dissertation", "prop_consumped.png"), width=6, height=4)
 ```
 
